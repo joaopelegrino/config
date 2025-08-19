@@ -1,0 +1,115 @@
+{
+    // Configurações existentes mantidas
+    "editor.formatOnSave": true,
+    "explorer.confirmDelete": false,
+    "workbench.colorCustomizations": {
+        "terminal.background": "#00000000"
+    },
+    "workbench.settings.applyToAllProfiles": [
+        "workbench.colorCustomizations"
+    ],
+    "editor.inlineSuggest.suppressSuggestions": true,
+    "workbench.iconTheme": "vscode-icons",
+    "security.allowedUNCHosts": [
+        "wsl.localhost"
+    ],
+    "roo-cline.allowedCommands": [
+        "npm test",
+        "npm install",
+        "tsc",
+        "git log",
+        "git diff",
+        "git show"
+    ],
+    "dev.containers.executeInWSL": true,
+    "terminal.integrated.fontFamily": "Hack Nerd Font",
+    "editor.mouseWheelZoom": true,
+    "github.copilot.chat.reviewSelection.instructions": [],
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": ""
+        }
+    ],
+    "json.schemas": [],
+    "geminicodeassist.project": "projeto-laravel-vertex",
+    "snyk.advanced.cliPath": "C:\\Users\\valor\\AppData\\Local\\snyk\\vscode-cli\\snyk-win.exe",
+    "snyk.folderConfigs": [
+        {
+            "folderPath": "\\\\wsl.localhost\\Ubuntu\\home\\joao\\workspace\\learning\\projetos_c\\Saas-Comunicacao-Saude",
+            "baseBranch": ""
+        },
+        {
+            "folderPath": "\\\\wsl.localhost\\Ubuntu\\home\\joao\\.claude",
+            "baseBranch": ""
+        },
+        {
+            "folderPath": "\\\\wsl.localhost\\Ubuntu\\home\\joao\\config",
+            "baseBranch": ""
+        }
+    ],
+    "snyk.yesWelcomeNotification": false,
+    "snyk.trustedFolders": [
+        "c:\\Programação\\Aplicação-web",
+        "c:\\Users\\valor\\Documents\\WM\\BM",
+        "c:\\Programação\\Planejamento-Saas",
+        "c:\\Programação\\BMApp",
+        "c:\\Users\\valor\\Documents\\Obsidian\\Arquivos",
+        "c:\\Programação\\Saas",
+        "c:\\Programação\\Saas-Comunicacao-Saude",
+        "c:\\Programação\\ambiente",
+        "\\\\wsl.localhost\\Ubuntu\\home\\joao"
+    ],
+    "workbench.secondarySideBar.showLabels": false,
+    "geminicodeassist.rules": "\n\n\n",
+    "diffEditor.codeLens": true,
+    "geminicodeassist.inlineSuggestions.enableAuto": true,
+    "geminicodeassist.customCommands": {
+        "md": "Melhore a formatação do arquivo markdown aberto, colocando marcações de titulos, subtitulos, etc.."
+    },
+    "geminicodeassist.chat.collapseCodeBlocksByDefault": true,
+    "geminicodeassist.codeGenerationPaneViewEnabled": true,
+    "workbench.editor.empty.hint": "hidden",
+    "chat.editor.fontSize": 20,
+    "chat.implicitContext.enabled": {
+        "panel": "never"
+    },
+    "vscode-ollama.baseUrl": "http://127.0.0.1:11434",
+    "vscode-ollama.model": "devstral:latest",
+    "vscode-ollama.maxTokens": 4096,
+    "vscode-ollama.keepAlive": "5 minutes",
+    "vscode-ollama.performanceMode": "Base (Default)",
+    "vscode-ollama.systemPrompt": "Given the following conversation, relevant context, and a follow up question, reply with an answer to the current question the user is asking. Return only your response to the question given the above information following the users instructions as needed.",
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "githubIssues.queries": [
+        {
+            "label": "My Issues",
+            "query": "is:open assignee:${user} repo:${owner}/${repository}",
+            "groupBy": [
+                "milestone"
+            ]
+        },
+        {
+            "label": "Created Issues",
+            "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
+        },
+        {
+            "label": "Recent Issues",
+            "query": "state:open repo:${owner}/${repository} sort:updated-desc"
+        }
+    ],
+    "githubPullRequests.experimental.chat": true,
+    "githubPullRequests.experimental.useQuickChat": true,
+    "terminal.integrated.fontSize": 11,
+    "workbench.editor.enablePreview": false,
+    "files.autoSave": "afterDelay",
+    "explorer.confirmDragAndDrop": false,
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "workbench.editor.showTabs": "single",
+    "makefile.configureOnOpen": true,
+}

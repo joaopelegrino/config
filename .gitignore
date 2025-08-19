@@ -1,0 +1,24 @@
+# Arquivos de backup
+*.backup
+*.bak
+*.tmp
+*~
+.*.swp
+
+# Arquivos de log
+*.log
+
+# Arquivos sensíveis
+.env
+.secrets
+*.key
+*.pem
+
+# Temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Temporários do Vim
+*.swp
+*.swo
+.vim/undodir/
