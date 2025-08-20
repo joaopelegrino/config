@@ -21,4 +21,23 @@ Thumbs.db
 # Temporários do Vim
 *.swp
 *.swo
-.vim/undodir/
+*.swn
+.netrwhist
+vim/undodir/*
+vim/.netrwhist
+vim/spell/*.spl
+vim/spell/*.sug
+vim/view/
+vim/session/
+
+# Plugins do Vim (serão baixados pelo vim-plug)
+vim/plugged/
+
+# Arquivos de histórico e cache do Vim
+vim/plugged/*/.git/
+vim/plugged/*/test/
+vim/plugged/*/tests/
+vim/plugged/*/doc/tags
+
+# Backups do script de sincronização
+vim-backup-*
