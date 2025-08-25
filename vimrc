@@ -478,7 +478,20 @@ set matchtime=2
 set mouse=a
 
 " Enable clipboard integration
-if has('clipboard')
+if has('wsl')
+    let g:clipboard = {
+        \ 'name': 'WslClipboard',
+        \ 'copy': {
+        \    '+': 'clip.exe',
+        \    '*': 'clip.exe',
+        \  },
+        \ 'paste': {
+        \    '+': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        \    '*': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        \ },
+        \ 'cache_enabled': 0,
+        \ }
+elseif has('clipboard')
     if has('unnamedplus')
         set clipboard=unnamedplus
     else

@@ -71,3 +71,5 @@ alias s='./vendor/bin/sail'
 # Definir o editor padrão
 export EDITOR=vim
 . "$HOME/.cargo/env"
+export PATH="/opt/elixir-1.15.7/bin:$PATH"
+export ELIXIR_ERL_OPTIONS="+fnu"

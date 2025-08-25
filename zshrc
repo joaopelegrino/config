@@ -1,23 +1,34 @@
 # ~/.zshrc
 # LIDO APENAS PARA SHELLS ZSH INTERATIVOS
 
-# --- SSH Agent Initialization ---
-# Verifica se o agente já está rodando olhando variáveis de ambiente
-if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l > /dev/null; then
-    # Inicia um novo agente se não estiver rodando ou não tiver chaves
-    eval "$(ssh-agent -s)" > /dev/null
-    # Adiciona a chave padrão (ajuste o caminho se não for id_ed25519)
-    ssh-add ~/.ssh/id_ed25519 2> /dev/null || ssh-add ~/.ssh/id_ed25519
-fi
+# --- SSH Agent Persistente ---
+SSH_ENV="$HOME/.ssh/agent-environment"
 
-# --- Fim SSH Agent Initialization ---
+function start_agent {
+    echo "Initializing new SSH agent..."
+    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+    chmod 600 "${SSH_ENV}"
+    . "${SSH_ENV}" > /dev/null
+    /usr/bin/ssh-add ~/.ssh/id_ed25519 2>/dev/null
+}
+
+if [ -f "${SSH_ENV}" ]; then
+    . "${SSH_ENV}" > /dev/null
+    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+        start_agent;
+    }
+else
+    start_agent;
+fi
+# --- Fim SSH Agent Persistente ---
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-# # typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # --- Oh My Zsh ---
 # Path to your Oh My Zsh installation.
@@ -29,7 +40,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Add wisely, as too many plugins slow down shell startup.
-# 'fzf' foi removido daqui pois carregamos manualmente abaixo com mais controle.
+# 'fzf' foi removido daqui pois carregamos manually abaixo com mais controle.
 plugins=(
     git
     zsh-autosuggestions
@@ -303,3 +314,34 @@ alias obs-vault='nohup $OBSIDIAN_BIN --no-sandbox $OBSIDIAN_HOME > /dev/null 2>&
 alias obs-kill='pkill -f Obsidian'  # Fecha todos os processos do Obsidian
 alias obs-status='ps aux | grep -i obsidian | grep -v grep'  # Verifica status do Obsidian
 export PATH="$HOME/.local/bin:$PATH"
+
+# === Aliases de Produtividade ===
+# Docker aliases
+alias dps="docker ps"
+alias dpa="docker ps -a"
+alias di="docker images"
+alias dex="docker exec -it"
+alias dc="docker compose"
+alias dcu="docker compose up -d"
+alias dcd="docker compose down"
+alias dcl="docker compose logs -f"
+
+# Git aliases adicionais
+alias gst="git status -sb"
+alias gco="git checkout"
+alias gcm="git commit -m"
+alias glog="git log --oneline --graph --decorate"
+alias gp="git push"
+alias gl="git pull"
+alias gd="git diff"
+
+# Navegação rápida
+alias ws="cd ~/workspace"
+alias conf="cd ~/config"
+alias learning="cd ~/workspace/learning"
+
+# Desenvolvimento
+alias ports="netstat -tulanp"
+
+# Reload configurations
+alias reload="source ~/.zshrc && source ~/.p10k.zsh"
