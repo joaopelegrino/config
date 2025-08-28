@@ -1,6 +1,6 @@
 [user]
-	name = João
-	email = joao@example.com
+	name = Notebook
+	email = notebook@example.com
 
 [core]
 	editor = vim
@@ -27,3 +27,9 @@
 	lg = log --oneline --graph --decorate --all
 	last = log -1 HEAD
 	unstage = reset HEAD --
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

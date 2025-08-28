@@ -125,7 +125,7 @@
             {
                 "bellStyle": "none",
                 "colorScheme": "Ubuntu",
-                "commandline": "wsl.exe -d Ubuntu",
+                "commandline": "wsl.exe -d Ubuntu-24.04",
                 "font": 
                 {
                     "face": "Hack Nerd Font",
@@ -138,7 +138,7 @@
                 "opacity": 100,
                 "padding": "8, 2, 8, 2",
                 "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc",
-                "startingDirectory": "//wsl$/Ubuntu/home/joao"
+                "startingDirectory": "//wsl.localhost/Ubuntu-24.04/home/notebook"
             },
             {
                 "commandline": "C:\\Programa\u00e7\u00e3o\\Git\\bin\\bash.exe -i -l",

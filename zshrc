@@ -141,7 +141,7 @@ remoteadd() {
   echo "Remote 'origin' adicionado com sucesso para ${repo_name}."
 }
 
-# Função para adicionar remote pessoal (joaopelegrino)
+# Função para adicionar remote pessoal (notebook)
 remoteadd_personal() {
   local repo_name personal_username remote_url
 
@@ -152,7 +152,7 @@ remoteadd_personal() {
     return 1
   fi
   repo_name="$1"
-  personal_username="joaopelegrino"
+  personal_username="notebook"
 
   # Verifica se a variável de token GH foi carregada do .env
   if [ -z "$GH" ]; then
@@ -178,7 +178,7 @@ remoteadd_personal() {
   echo "Remote 'personal' adicionado com sucesso para ${personal_username}/${repo_name}."
 }
 
-# Função para sincronizar com ambos os remotes (wmogh + joaopelegrino)
+# Função para sincronizar com ambos os remotes (wmogh + notebook)
 sync_repos() {
   local branch=$(git branch --show-current 2>/dev/null)
   local message="$1"
@@ -203,14 +203,14 @@ sync_repos() {
     return 1
   fi
   
-  # Push para joaopelegrino (personal) se existir
+  # Push para notebook (personal) se existir
   if git remote get-url personal &>/dev/null; then
-    echo "📤 Pushing para joaopelegrino (personal)..."
+    echo "📤 Pushing para notebook (personal)..."
     if git push personal "$branch"; then
-      echo "✅ Push para joaopelegrino concluído"
+      echo "✅ Push para notebook concluído"
       echo "🎉 Sincronização completa!"
     else
-      echo "❌ Falha no push para joaopelegrino"
+      echo "❌ Falha no push para notebook"
       return 1
     fi
   else
@@ -270,13 +270,15 @@ alias claudecode="npx @anthropic-ai/claude-code"
 # Shell reload - Recarregar todas as configurações
 alias reload="source ~/.zshenv && source ~/.zshrc && source ~/.p10k.zsh && source ~/.fzf.zsh"
 
-alias vim-diag="/home/joao/config/vim-diagnostic.sh"
+# Vim config reload helper
+alias vimreload="echo 'Execute no Vim: :source ~/.vimrc'"
+
+alias vim-diag="/home/notebook/config/vim-diagnostic.sh"
 
 # Atalhos para projetos e configurações
 alias la='alias | sort'
-alias sp="cd /home/joao/workspace/learning/sistema-programacao"
-alias zed="vim /home/joao/config/zshrc"
-alias ved="vim /home/joao/config/vimrc"
+alias zed="vim /home/notebook/config/zshrc"
+alias ved="vim /home/notebook/config/vimrc"
 
 # ========================================
 # Yazi File Manager Integration
@@ -293,13 +295,10 @@ function yy() {
 }
 
 # Yazi file manager aliases
-alias y="yazi"        # Abrir Yazi
-alias b="yazi"        # Abrir gerenciador de arquivos Yazi
-alias fm="yazi"       # File manager
 alias yy="yy"         # Yazi with cd integration
 
 # opencode
-export PATH=/home/joao/.opencode/bin:$PATH
+export PATH=/home/notebook/.opencode/bin:$PATH
 
 # ========================================
 # Obsidian Configuration
@@ -336,9 +335,7 @@ alias gl="git pull"
 alias gd="git diff"
 
 # Navegação rápida
-alias ws="cd ~/workspace"
 alias conf="cd ~/config"
-alias learning="cd ~/workspace/learning"
 
 # Desenvolvimento
 alias ports="netstat -tulanp"

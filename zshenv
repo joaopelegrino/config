@@ -12,4 +12,5 @@ export LC_ALL=pt_BR.UTF-8
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
 export SAVEHIST=10000
-. "$HOME/.cargo/env"
+# Carregar Cargo (Rust) se disponível
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

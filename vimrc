@@ -233,6 +233,40 @@ nnoremap <leader><space> :noh<CR>
 " Toggle spell check
 nnoremap <leader>s :set spell!<CR>
 
+" -----------------------------------------------------------------------------
+" CLIPBOARD OPTIMIZATION - WSL2-Windows Integration
+" -----------------------------------------------------------------------------
+" Copy to Windows clipboard
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+nnoremap <leader>Y "+Y
+
+" Paste from Windows clipboard
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>p "+p
+
+" Copy whole file to Windows clipboard
+nnoremap <leader>ya :%+y<CR>:echo "Arquivo copiado para Windows clipboard!"<CR>
+
+" Copy current line to Windows clipboard with feedback
+nnoremap <leader>yy "+yy:echo "Line copied to Windows clipboard"<CR>
+
+" Fast copy word under cursor
+nnoremap <leader>yw viw"+y:echo "Word copied to Windows clipboard"<CR>
+
+" Visual mode - copy selection and show feedback
+vnoremap <leader>c "+y:echo "Selection copied to Windows clipboard"<CR>
+
+" Paste and format (useful for code)
+nnoremap <leader>pf "+p=`]
+
+" Quick clipboard status check
+nnoremap <leader>cb :echo "Clipboard: " . @+<CR>
+
+" Reload vimrc
+nnoremap <leader>rv :source ~/.vimrc<CR>:echo "vimrc reloaded!"<CR>
+
 " Toggle line numbers
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>rn :set relativenumber!<CR>
@@ -491,6 +525,19 @@ if has('wsl')
         \ },
         \ 'cache_enabled': 0,
         \ }
+    
+    " Workaround para Vim sem clipboard (fallback)
+    if !has('clipboard')
+        " Auto-copiar yanks para Windows clipboard
+        augroup WSLYank
+            autocmd!
+            autocmd TextYankPost * if v:event.operator ==# 'y' | call system('clip.exe', @0) | endif
+        augroup END
+        
+        " Comando alternativo para copiar arquivo todo
+        command! -nargs=0 CopyAll w !clip.exe
+        nnoremap <leader>ya :CopyAll<CR>:echo "Arquivo copiado via pipe!"<CR>
+    endif
 elseif has('clipboard')
     if has('unnamedplus')
         set clipboard=unnamedplus

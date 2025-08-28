@@ -170,7 +170,7 @@ echo "📊 6. ESTATÍSTICAS"
 echo "-" $(printf '%.0s' {1..30})
 
 # Configuração centralizada
-print_info "Localização: /home/joao/config/vimrc"
+print_info "Localização: /home/notebook/config/vimrc"
 
 # Espaço ocupado
 VIM_SIZE=$(du -sh ~/.vim 2>/dev/null | cut -f1)
@@ -190,7 +190,7 @@ echo "-" $(printf '%.0s' {1..30})
 if [ -d ~/.vim/plugged ] && ! grep -q "call plug#begin" ~/.vimrc 2>/dev/null; then
     echo -e "${RED}❗ CRÍTICO: Plugins instalados mas não carregados${NC}"
     echo -e "${YELLOW}   Solução: Adicionar configuração vim-plug ao vimrc${NC}"
-    echo -e "${BLUE}   Consulte: /home/joao/config/vim-README.md${NC}"
+    echo -e "${BLUE}   Consulte: /home/notebook/config/vim-README.md${NC}"
 fi
 
 # Verificar versão do Vim
@@ -206,7 +206,7 @@ echo "   2. Configurar language servers para LSP"
 echo "   3. Personalizar keybindings para workflow"
 
 echo
-echo "📖 DOCUMENTAÇÃO COMPLETA: /home/joao/config/vim-README.md"
+echo "📖 DOCUMENTAÇÃO COMPLETA: /home/notebook/config/vim-README.md"
 echo "🔧 Para implementar melhorias, siga o roteiro no README"
 echo
 echo "Diagnóstico concluído em $(date)"

@@ -35,20 +35,20 @@
     "snyk.advanced.cliPath": "C:\\Users\\valor\\AppData\\Local\\snyk\\vscode-cli\\snyk-win.exe",
     "snyk.folderConfigs": [
         {
-            "folderPath": "\\\\wsl.localhost\\Ubuntu\\home\\joao\\workspace\\learning\\projetos_c\\Saas-Comunicacao-Saude",
+            "folderPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\notebook\\workspace\\learning\\projetos_c\\Saas-Comunicacao-Saude",
             "baseBranch": ""
         },
         {
-            "folderPath": "\\\\wsl.localhost\\Ubuntu\\home\\joao\\.claude",
+            "folderPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\notebook\\.claude",
             "baseBranch": ""
         },
         {
-            "folderPath": "\\\\wsl.localhost\\Ubuntu\\home\\joao\\config",
+            "folderPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\notebook\\config",
             "baseBranch": ""
         }
     ],
     "snyk.yesWelcomeNotification": false,
-    "snyk.trustedFolders": [
+    "snyk.trustedFolders": [:q
         "c:\\Programação\\Aplicação-web",
         "c:\\Users\\valor\\Documents\\WM\\BM",
         "c:\\Programação\\Planejamento-Saas",
@@ -57,7 +57,7 @@
         "c:\\Programação\\Saas",
         "c:\\Programação\\Saas-Comunicacao-Saude",
         "c:\\Programação\\ambiente",
-        "\\\\wsl.localhost\\Ubuntu\\home\\joao"
+        "\\\\wsl.localhost\\Ubuntu-24.04\\home\\notebook"
     ],
     "workbench.secondarySideBar.showLabels": false,
     "geminicodeassist.rules": "\n\n\n",

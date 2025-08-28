@@ -15,4 +15,5 @@ if grep -q "microsoft" /proc/version 2>/dev/null; then
     export WSL=1
     export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
 fi
-. "$HOME/.cargo/env"
+# Carregar Cargo (Rust) se disponível
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

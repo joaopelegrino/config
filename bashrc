@@ -73,3 +73,32 @@ export EDITOR=vim
 . "$HOME/.cargo/env"
 export PATH="/opt/elixir-1.15.7/bin:$PATH"
 export ELIXIR_ERL_OPTIONS="+fnu"
+export PATH="$HOME/.local/bin:$HOME/.fzf/bin:$PATH"
+
+# === Aliases de Produtividade ===
+# Git aliases
+alias gst="git status -sb"
+alias gco="git checkout"
+alias gcm="git commit -m"
+alias glog="git log --oneline --graph --decorate"
+alias gp="git push"
+alias gl="git pull"
+alias gd="git diff"
+
+# Navegação rápida
+alias ws="cd ~/workspace"
+alias conf="cd ~/config"
+alias learning="cd ~/workspace/learning"
+alias ll="ls -alF"
+alias la="ls -A"
+alias l="ls -CF"
+
+# Desenvolvimento
+alias py="python3"
+alias reload="source ~/.bashrc"
+
+# Função para usar FZF se disponível
+if [ -f ~/.fzf/bin/fzf ]; then
+    export PATH="$HOME/.fzf/bin:$PATH"
+    export FZF_DEFAULT_OPTS='--height 60% --layout=reverse --border'
+fi
