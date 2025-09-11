@@ -1,10 +1,10 @@
 # 📚 Manual Completo do Ambiente de Desenvolvimento
 
-**Última atualização:** 19/08/2025  
-**Sistema:** Windows 11 + WSL2 Ubuntu 24.04 + VSCode + Warp Terminal + Zsh  
-**Usuário:** joao  
-**Diretório Base:** `/home/joao/workspace`  
-**Arquivo Único Consolidado:** `/home/joao/config/instrucoes.md`
+**Última atualização:** 01/09/2025  
+**Sistema:** Windows 11 + WSL2 Ubuntu 24.04 + VSCode + Windows Terminal + Zsh  
+**Usuário:** notebook  
+**Diretório Base:** `/home/notebook/workspace`  
+**Configuração Central:** `/home/notebook/config/`
 
 ---
 
@@ -14,16 +14,17 @@
 
 | Componente | Status | Versão/Detalhes |
 |------------|--------|-----------------|
-| **Sistema Operacional** | ✅ | WSL2 Ubuntu |
-| **Shell** | ✅ | Zsh 5.9 com Oh My Zsh |
-| **Terminal** | ✅ | Warp Terminal + Windows Terminal |
-| **Editor Principal** | ✅ | Vim 9.1 GTK3 (com +clipboard, 547 linhas config, 17 plugins) |
+| **Sistema Operacional** | ✅ | WSL2 Ubuntu 24.04.3 LTS |
+| **Shell** | ✅ | Zsh 5.9 com Oh My Zsh + Powerlevel10k |
+| **Terminal** | ✅ | Windows Terminal + Claude Code |
+| **Editor Principal** | ✅ | Vim 9.1 (580+ linhas config, 17 plugins + MuComplete) |
+| **Sistema de Completion** | 🆕 | MuComplete + LSP + Completion Nativo Integrado |
 | **VSCode** | ✅ | Com extensões e workspace configurado |
 | **Git** | ✅ | 2.43.0 com aliases e funções helper |
 | **Python** | ✅ | 3.12.3 |
-| **Node.js** | ✅ | 22.15.0 com NVM |
+| **Node.js** | ✅ | v18.19.1 com NVM |
 | **Docker** | ✅ | Docker Desktop com integração WSL2 |
-| **Gerenciador de Arquivos** | ✅ | Yazi (Rust) |
+| **Gerenciador de Arquivos** | ✅ | Yazi (Rust-based) |
 
 ---
 
@@ -55,12 +56,13 @@ reload      # Recarregar configurações do shell
 
 ### 📊 Estatísticas da Configuração
 
-- **547 linhas** de configuração otimizada (+208% de melhorias)
-- **17 plugins** ativos e configurados
-- **vim-gtk3** instalado para suporte completo a clipboard (+clipboard)
-- **LSP** para C, Python, TypeScript
+- **580+ linhas** de configuração otimizada (+18% desde última atualização)
+- **17 plugins** + **MuComplete** (18 plugins total)
+- **Sistema de Completion Profissional** implementado
+- **LSP** integrado para C, Python, TypeScript
 - **Git integration** completa com vim-fugitive
 - **FZF** para busca fuzzy ultrarrápida
+- **MuComplete** com chains por linguagem
 - **Clipboard WSL-Windows** totalmente funcional com fallback
 
 ### ⚡ Atalhos Principais
@@ -104,28 +106,54 @@ K               " Mostrar documentação
 [g / ]g         " Navegar entre erros
 ```
 
+#### 🚀 Sistema de Completion Profissional (NOVO)
+```vim
+" Completion Nativo
+Ctrl+x Ctrl+l   " Completion de linha inteira
+Ctrl+x Ctrl+f   " Completion de caminhos de arquivo
+Ctrl+x Ctrl+s   " Completion ortográfico (spell)
+Ctrl+x Ctrl+o   " Omni completion (inteligente por linguagem)
+Ctrl+x Ctrl+v   " Completion de comandos Vim
+Ctrl+x Ctrl+k   " Completion de dicionário
+Ctrl+x Ctrl+t   " Completion de thesaurus
+
+" MuComplete - Auto-completion
+Tab             " Próxima sugestão (integrado com vsnip)
+Shift+Tab       " Sugestão anterior
+Ctrl+n/p        " Navegar menu de completion
+Enter/→         " Aceitar sugestão
+←               " Cancelar completion
+```
+
+#### 📝 Chains de Completion por Linguagem
+- **HTML/CSS**: Omni → Keywords → Dictionary
+- **JavaScript/TypeScript**: Omni → Keywords → Dictionary  
+- **Python**: Omni → Keywords → Dictionary
+- **Markdown**: Dictionary → Spell → Keywords
+- **Vim Scripts**: Commands → Keywords
+- **C/C++**: Omni → Keywords
+
 ### 📁 Estrutura de Arquivos Vim
 
 ```bash
 ~/.vim/
 ├── autoload/
 │   └── plug.vim           # Plugin manager
-├── plugged/               # 17 plugins instalados
+├── plugged/               # 18 plugins instalados (com MuComplete)
 │   ├── fzf/              
 │   ├── vim-airline/      
 │   ├── vim-lsp/          
 │   ├── vim-fugitive/     
+│   ├── vim-mucomplete/   # 🆕 Sistema de auto-completion
 │   └── ...               
 ├── undodir/              # Histórico persistente
 ├── spell/                # Dicionários PT-BR/EN
 └── vsnip/                # Snippets customizados
 
-/home/joao/config/
-├── vimrc                 # Config principal (547 linhas, com clipboard)
-├── vimrc.backup          # Backup seguro
-├── vim-README.md         # Documentação detalhada
-├── vim-quick-guide.md    # Guia rápido
-└── vim-diagnostic.sh     # Script de diagnóstico
+/home/notebook/config/
+├── vimrc                 # Config principal (580+ linhas, sistema completo)
+├── vim-diagnostic.sh     # Script de diagnóstico
+└── sync-vim-config.sh    # Script de sincronização
 ```
 
 ---
@@ -325,6 +353,53 @@ services:
 
 ### ⚠️ Nota sobre Warp Terminal
 O Yazi tem incompatibilidades conhecidas com o Warp Terminal. Use Windows Terminal ou VSCode terminal para melhor experiência com Yazi.
+
+---
+
+## 🖥️ Windows Terminal - Configuração Central
+
+### 📍 Localização dos Arquivos de Configuração
+
+#### Path Oficial do Windows Terminal
+```
+Windows: C:\Users\valor\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+WSL:     /mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json
+```
+
+#### Backup Versionado (Este Repositório)
+```
+Local:   /home/notebook/config/windows-terminal-settings.json
+```
+
+### 🔄 Sincronização de Configurações
+
+Para manter as configurações sincronizadas entre o Windows Terminal oficial e o backup versionado:
+
+```bash
+# Copiar configuração do Windows Terminal para backup
+cp "/mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json" \
+   "/home/notebook/config/windows-terminal-settings.json"
+
+# Aplicar backup para Windows Terminal (cuidado - sobrescreve)
+cp "/home/notebook/config/windows-terminal-settings.json" \
+   "/mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+```
+
+### ⚠️ Configurações Principais Verificadas
+
+- **✅ Perfil Ubuntu WSL** configurado
+- **✅ Fonte Nerd Font** (Hack Nerd Font)  
+- **✅ Diretório inicial WSL** (`//wsl.localhost/Ubuntu-24.04/home/notebook`)
+- **✅ Atalhos personalizados** para produtividade
+- **✅ Esquemas de cores** (Dracula, Nord, Ubuntu)
+
+### 🔍 Verificação via Diagnóstico
+
+O script `diagnostico-ambiente.sh` verifica automaticamente:
+- Existência do arquivo de configuração
+- Configuração do perfil WSL
+- Fonte Nerd Font
+- Diretório inicial correto
 
 ---
 
@@ -674,16 +749,17 @@ command! Timestamp put =strftime('%Y-%m-%d %H:%M:%S')
 
 ### Links Simbólicos Ativos
 ```bash
-# Todos apontam para /home/joao/config/
-~/.bashrc     → /home/joao/config/bashrc
-~/.gitconfig  → /home/joao/config/gitconfig  
-~/.fzf.zsh    → /home/joao/config/fzf.zsh
-~/.fzf.bash   → /home/joao/config/fzf.bash
-~/.profile    → /home/joao/config/profile
-~/.p10k.zsh   → /home/joao/config/p10k.zsh
-~/.zshenv     → /home/joao/config/zshenv
-~/.zshrc      → /home/joao/config/zshrc
-~/.vimrc      → /home/joao/config/vimrc
+# Todos apontam para /home/notebook/config/
+~/.bashrc     → /home/notebook/config/bashrc
+~/.gitconfig  → /home/notebook/config/gitconfig  
+~/.fzf.zsh    → /home/notebook/config/fzf.zsh
+~/.fzf.bash   → /home/notebook/config/fzf.bash
+~/.profile    → /home/notebook/config/profile
+~/.p10k.zsh   → /home/notebook/config/p10k.zsh
+~/.zshenv     → /home/notebook/config/zshenv
+~/.zshrc      → /home/notebook/config/zshrc
+~/.vimrc      → /home/notebook/config/vimrc
+~/.vim        → /home/notebook/config/vim
 ```
 
 ### Integração com Windows
@@ -1114,8 +1190,35 @@ Esta seção documenta os 3 scripts funcionais essenciais mantidos neste reposit
 
 ---
 
+---
+
+## 🎯 Resumo das Últimas Atualizações (01/09/2025)
+
+### ✅ Sistema de Completion Profissional Implementado
+- **MuComplete instalado** e integrado com vsnip + LSP
+- **18 plugins totais** (17 + MuComplete)
+- **Mapeamentos nativos completos** para todos os tipos de completion
+- **Chains por linguagem** configuradas (HTML, JS, Python, Markdown, etc.)
+- **Conflitos resolvidos** (E227: Mapping already exists)
+- **580+ linhas** de configuração otimizada
+
+### 🔧 Correções Aplicadas
+- **Link circular removido** (vim/vim → /home/notebook/config/vim)
+- **Aliases duplicados consolidados** no zshrc
+- **Configurações ASDF organizadas** no bashrc
+- **Diagnóstico passou** de 85% para 95% de otimização
+
+### 📋 Funcionalidades Ativas
+- **Auto-completion contextual** com 2+ caracteres
+- **Tab inteligente** (MuComplete → vsnip → Tab normal)
+- **Completion nativo** completo (`Ctrl+x` combinations)
+- **LSP integration** mantida e aprimorada
+- **Performance otimizada** sem conflitos
+
+---
+
 **📅 Criado:** 18/08/2025  
-**🔄 Última atualização:** 26/08/2025  
-**✅ Status:** Ambiente completo e funcional  
+**🔄 Última atualização:** 01/09/2025  
+**✅ Status:** Sistema profissional 100% implementado e funcional  
 **📍 Localização principal:** `/home/notebook/config/`  
 **🚀 Comandos rápidos:** `./vim-diagnostic.sh` | `./diagnostico-ambiente.sh` | `reload` | `yy` | `sync_repos`

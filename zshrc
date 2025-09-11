@@ -30,6 +30,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Windows Terminal WSL2 - Enable true colors
+export COLORTERM=truecolor
+
 # --- Oh My Zsh ---
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -63,6 +66,7 @@ source $ZSH/oh-my-zsh.sh
 
 
 # alias cnvim='p ~/.config/nvim/' # REMOVIDO
+alias vimv='vim -u NONE -U NONE --noplugin'
 alias c='clear'
 alias la='ls -A' # Mostra ocultos exceto . e ..
 alias ll='ls -alF' # Detalhado, ocultos, indicador de tipo
@@ -152,7 +156,7 @@ remoteadd_personal() {
     return 1
   fi
   repo_name="$1"
-  personal_username="notebook"
+  personal_username="joaopelegrino"
 
   # Verifica se a variável de token GH foi carregada do .env
   if [ -z "$GH" ]; then
@@ -242,6 +246,41 @@ pwdc() {
   # Imprime o caminho copiado
   echo "📋 Copiado: $full_path"
 }
+
+# Função para mostrar caminho atual e tree da pasta
+pwdct() {
+  local current_path
+  
+  # Obtém o caminho atual
+  current_path="$(pwd)"
+  
+  # Imprime o caminho atual
+  echo "📁 $current_path"
+  echo
+  
+  # Prepara o conteúdo para clipboard
+  local clipboard_content tree_output
+  
+  # Verifica se o comando tree está disponível
+  if command -v tree >/dev/null 2>&1; then
+    echo "🌳 Estrutura do diretório:"
+    tree_output=$(tree -L 2 -a --dirsfirst)
+    echo "$tree_output"
+  else
+    echo "🌳 Estrutura do diretório (usando ls):"
+    tree_output=$(ls -la)
+    echo "$tree_output"
+  fi
+  
+  # Prepara conteúdo completo para clipboard
+  clipboard_content="$current_path"$'\n\n'"$tree_output"
+  
+  # Copia para clipboard (funciona no WSL)
+  echo -n "$clipboard_content" | clip.exe 2>/dev/null || echo -n "$clipboard_content" | xclip -selection clipboard 2>/dev/null
+  
+  echo
+  echo "📋 Conteúdo copiado para clipboard!"
+}
 # --- Fim Funções ---
 
 # --- Configuração Variáveis Github ---
@@ -279,6 +318,15 @@ alias vim-diag="/home/notebook/config/vim-diagnostic.sh"
 alias la='alias | sort'
 alias zed="vim /home/notebook/config/zshrc"
 alias ved="vim /home/notebook/config/vimrc"
+alias wted="vim '/mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'"
+alias claudeinit="vim /home/notebook/workspace/blog/.claude/commands/iniciar-fase.md"
+
+# Copiar arquivo do agente programador para pasta atual
+alias cpagent='() { 
+    local dest_name="${1:-agente-programador-system-prompt.md}"
+    cp /home/notebook/workspace/especialistas/claude-code/agente-programador-system-prompt.md "./$dest_name" && 
+    echo "✅ Arquivo copiado como: $dest_name" 
+}'
 
 # ========================================
 # Yazi File Manager Integration
@@ -295,7 +343,10 @@ function yy() {
 }
 
 # Yazi file manager aliases
-alias yy="yy"         # Yazi with cd integration
+alias y="yazi"        # Abrir Yazi normalmente
+alias b="yazi"        # Alias alternativo
+alias fm="yazi"       # File manager
+# yy já é uma função, não precisa de alias
 
 # opencode
 export PATH=/home/notebook/.opencode/bin:$PATH
@@ -334,11 +385,102 @@ alias gp="git push"
 alias gl="git pull"
 alias gd="git diff"
 
+# Função para estado geral do repositório git (não-interativo)
+gitoverview() {
+  echo '📊 Estado Geral do Repositório Git'
+  echo '════════════════════════════════════'
+  echo
+  
+  echo '📁 Branch atual:'
+  git branch --show-current 2>/dev/null
+  echo
+  
+  echo '🌐 Remotes configurados:'
+  git remote -v 2>/dev/null
+  echo
+  
+  echo '🌿 Todas as branches (locais e remotas):'
+  git --no-pager branch -a --sort=-committerdate 2>/dev/null
+  echo
+  
+  echo '📋 Status do repositório:'
+  git status -sb 2>/dev/null
+  echo
+  
+  echo '📈 Últimos 5 commits:'
+  git --no-pager log --oneline -5 2>/dev/null
+  echo
+  
+  echo '🔄 Comparação com remote (se disponível):'
+  local comparison
+  comparison=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
+  if [ $? -eq 0 ] && [ -n "$comparison" ]; then
+    echo "$comparison" | awk '{
+      if($1>0) print "↑ " $1 " commits para push"
+      if($2>0) print "↓ " $2 " commits para pull"
+      if($1==0 && $2==0) print "✅ Branch sincronizada com remote"
+    }'
+  else
+    echo 'Branch não está tracking um remote'
+  fi
+}
+
 # Navegação rápida
 alias conf="cd ~/config"
+alias desktop="cd /mnt/c/Users/valor/Desktop"
 
 # Desenvolvimento
 alias ports="netstat -tulanp"
 
-# Reload configurations
-alias reload="source ~/.zshrc && source ~/.p10k.zsh"
+# ========================================
+# Gerador de Aliases de Edição
+# ========================================
+
+# Função para gerar aliases de edição personalizados
+# Uso: mkalias [nome_completo_alias] [caminho_absoluto]
+# Exemplo: mkalias gited /home/notebook/config/gitconfig
+# Exemplo: mkalias nvimed ~/.config/nvim/init.vim
+# Resultado: alias gited="vim /home/notebook/config/gitconfig"
+mkalias() {
+  local alias_name full_path
+  
+  # Verifica se ambos os argumentos foram fornecidos
+  if [ $# -ne 2 ]; then
+    echo "❌ Uso: mkalias <nome_alias> <caminho_absoluto>" >&2
+    echo "📝 Exemplo: mkalias gited /home/notebook/config/gitconfig" >&2
+    echo "📝 Exemplo: mkalias nvimed ~/.config/nvim/init.vim" >&2
+    echo "📄 Resultado: alias criado para editar o arquivo" >&2
+    return 1
+  fi
+  
+  alias_name="$1"
+  full_path="$2"
+  
+  # Verifica se o arquivo existe
+  if [ ! -f "$full_path" ]; then
+    echo "⚠️  Arquivo não encontrado: $full_path" >&2
+    echo "🤔 Deseja criar o alias mesmo assim? (y/N)"
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+      echo "❌ Operação cancelada."
+      return 1
+    fi
+  fi
+  
+  # Cria o alias temporariamente na sessão atual
+  alias "$alias_name"="vim '$full_path'"
+  
+  # Adiciona permanentemente ao zshrc
+  echo "alias $alias_name=\"vim '$full_path'\"" >> /home/notebook/config/zshrc
+  
+  # Feedback para o usuário
+  echo "✅ Alias criado com sucesso!"
+  echo "📋 Comando: alias $alias_name=\"vim '$full_path'\""
+  echo "🔄 Execute 'reload' para aplicar em novas sessões, ou use já na sessão atual."
+  echo "📍 Adicionado ao final do arquivo zshrc"
+}
+
+alias cced="vim '/home/notebook/workspace/especialistas/claude-code/acao-cc.md'"
+alias arch="vim '/home/notebook/workspace/especialistas/fundamentos/guias-passo-a-passo/arch-minimal-setup.md'"
+
+alias concat-md="PROJETO=\$(basename \"\$PWD\" | tr \"a-z-\" \"A-Z_\"); { echo \"# 📚 \$PROJETO - DOCUMENTAÇÃO COMPLETA\"; echo \"**Gerado em:** \$(date)\"; echo \"\"; find . -name \"*.md\" -type f | sort | while read file; do echo -e \"\n---\n## 📁 \$file\n\"; cat \"\$file\"; done; } > \"\${PROJETO}_COMPLETO.md\" && echo \"✅ Gerado: \${PROJETO}_COMPLETO.md\""

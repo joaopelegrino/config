@@ -1,30 +1,21 @@
 " -----------------------------------------------------------------------------
-" PERFORMANCE OPTIMIZATIONS - Load these first to prevent delays
-" -----------------------------------------------------------------------------
-set belloff=all          " Disable all bells - fixes 2s warning delay
-set novisualbell        " No visual bell
-set t_vb=              " No terminal bell
-set noerrorbells       " No error bells
-set vb t_vb=          " Disable all bells completely
-
-" Terminal colors configuration
 if has('termguicolors')
     set termguicolors
 else
     set t_Co=256
 endif
-
 " -----------------------------------------------------------------------------
 " Plugin Management with vim-plug
-" -----------------------------------------------------------------------------
 call plug#begin('~/.vim/plugged')
 
 " File Navigation & Search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" Lightweight status line (10x faster than airline)
-Plug 'itchyny/lightline.vim'
+" Interface & Visual
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'ryanoasis/vim-devicons'
 
 " Development Tools
 Plug 'prabirshrestha/vim-lsp'
@@ -35,6 +26,8 @@ Plug 'tpope/vim-surround'
 
 " Code Completion & Snippets
 Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'rafamadriz/friendly-snippets'
 Plug 'lifepillar/vim-mucomplete'
 
 " Language Support
@@ -74,20 +67,18 @@ let g:fzf_colors = {
   \ 'header':  ['fg', 'Comment']
   \ }
 
-" Lightline Configuration (Fast and minimal)
-let g:lightline = {
-    \ 'colorscheme': 'wombat',
-    \ 'active': {
-    \   'left': [ [ 'mode', 'paste' ],
-    \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-    \   'right': [ [ 'lineinfo' ],
-    \              [ 'percent' ],
-    \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
-    \ },
-    \ 'component_function': {
-    \   'gitbranch': 'FugitiveHead'
-    \ },
-    \ }
+" Airline Configuration (will replace manual statusline)
+let g:airline_theme = 'base16'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#hunks#enabled = 1
+
+" DevIcons Configuration
+let g:webdevicons_enable = 1
+let g:webdevicons_enable_airline_tabline = 1
+let g:webdevicons_enable_airline_statusline = 1
 
 " LSP Configuration
 let g:lsp_diagnostics_enabled = 1
@@ -134,6 +125,9 @@ let g:NERDDefaultAlign = 'left'
 let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
+" Vim-surround additional mappings
+" No additional config needed, works out of the box
+
 " Fugitive (Git) shortcuts
 nnoremap <leader>gs :Git status<CR>
 nnoremap <leader>ga :Git add .<CR>
@@ -144,10 +138,20 @@ nnoremap <leader>gd :Gvdiffsplit<CR>
 
 " Vsnip Configuration
 let g:vsnip_snippet_dir = expand('~/.vim/vsnip')
+" Integrated Tab completion - MuComplete + vsnip
+imap <expr> <Tab> pumvisible() ? '<C-n>' : vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Plug>(MUcompleteFwd)'
+imap <expr> <S-Tab> pumvisible() ? '<C-p>' : vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<Plug>(MUcompleteBwd)'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 
 " -----------------------------------------------------------------------------
-" MUCOMPLETE CONFIGURATION (Simplified - no conflicts)
+" MUCOMPLETE CONFIGURATION
 " -----------------------------------------------------------------------------
+" Auto-completion wrapper around Vim's native completion system
+
+" Disable MuComplete default mappings to avoid conflicts  
+let g:mucomplete#no_mappings = 1
+
 " Enable MuComplete at startup
 let g:mucomplete#enable_auto_at_startup = 1
 
@@ -165,20 +169,28 @@ let g:mucomplete#chains = {
     \ 'python': ['omni', 'c-n', 'dict'],
     \ 'c': ['omni', 'c-n'],
     \ 'cpp': ['omni', 'c-n'],
-    \ 'markdown': [],
+    \ 'markdown': ['c-n', 'dict'],
     \ 'text': ['c-n', 'dict'],
     \ 'dockerfile': ['c-n', 'dict']
     \ }
 
-" MuComplete spell check integration
+" Completion methods explanation:
+" - omni: Language-aware completion (requires omnifunc)
+" - c-n: Keyword completion from buffers
+" - dict: Dictionary completion
+" - uspl: Spell checking completion
+" - cmd: Vim command completion
+" - path: File path completion
+
+" MuComplete spel check integration
 let g:mucomplete#spel#good_words = 1
 
-" Simplified Tab handling for MuComplete only
-imap <expr> <Tab> pumvisible() ? '<C-n>' : '<Plug>(MUcompleteFwd)'
-imap <expr> <S-Tab> pumvisible() ? '<C-p>' : '<Plug>(MUcompleteBwd)'
+" Better popup menu behavior
+let g:mucomplete#popup_direction = {
+    \ 'path': 1,
+    \ 'uspl': -1
+    \ }
 
-" -----------------------------------------------------------------------------
-" CORE VIM SETTINGS
 " -----------------------------------------------------------------------------
 filetype plugin indent on
 syntax on
@@ -191,72 +203,78 @@ set hidden
 set splitbelow
 set splitright
 set fillchars=vert:│,fold:-,eob:~,lastline:@
-
-" File handling and path configuration
-set path=.,**,;                         " Search current, subdirs, and parent dirs recursively
-set suffixesadd+=.py,.js,.jsx,.ts,.tsx,.vue,.html,.css,.scss,.md,.vim
-set includeexpr=substitute(v:fname,'\\.','/','g')
+" -----------------------------------------------------------------------------
+set path=.,**
 set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
-
-" Display settings
+" -----------------------------------------------------------------------------
 set nowrap
 set linebreak
 set nolist
 set listchars=tab:›-,space:·,trail:◀,eol:↲
-
-" Line numbers
+" -----------------------------------------------------------------------------
 set number 
 set relativenumber
 set scrolloff=2
 set cursorline
-
-" Cursor shape
+" -----------------------------------------------------------------------------
 let &t_SI="\e[6 q"
 let &t_EI="\e[2 q"
-
-" Indentation
+" -----------------------------------------------------------------------------
 set autoindent
 set smartindent
+" -----------------------------------------------------------------------------
 set expandtab
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-
-" Search
+" -----------------------------------------------------------------------------
 set ignorecase
 set smartcase
 set incsearch
 set hls
 let @/ = ""
-
-" Completion
+" -----------------------------------------------------------------------------
 set completeopt=menuone,longest,noselect
 set shortmess+=c
 
-" Spell check
+" Spell check desabilitado - apenas inglês quando necessário
 set spelllang=en
 set nospell
 
-" Insert completion navigation
+" Insert completion...
+
+" -- Select with arrows up and down --
 inoremap <expr> <up> pumvisible() ? '<c-p>' : '<up>'
 inoremap <expr> <down> pumvisible() ? '<c-n>' : '<down>'
+
+" -- Accept with right arrow or enter --
 inoremap <expr> <right> pumvisible() ? '<c-y>' : '<right>'
 inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
+
+" -- Cancel completion with left arrow --
 inoremap <expr> <left> pumvisible() ? '<c-e>' : '<left>'
+
+function! Hashbangs()
+    let hb = ['#!/bin/bash', '#!/usr/bin/env bash', '#!/bin/sh', '#!/usr/bin/awk -f']
+    call complete(col('.'), hb)
+    return ''
+endfunction
+
+imap <c-x>h <c-r>=Hashbangs()<cr>
 
 " -----------------------------------------------------------------------------
 " NATIVE COMPLETION MAPPINGS
 " -----------------------------------------------------------------------------
 " Enhanced completion mappings based on vim completion system documentation
 
-" File path completion - completes file and directory paths
-inoremap <C-x><C-f> <C-x><C-f>
-
 " Line completion - completes entire lines
 inoremap <C-x><C-l> <C-x><C-l>
+
+" File path completion - completes file and directory paths
+inoremap <C-x><C-f> <C-x><C-f>
 
 " Spell completion - requires :set spell to be active
 inoremap <C-x><C-s> <C-x><C-s>
@@ -278,7 +296,6 @@ inoremap <C-x><C-i> <C-x><C-i>
 
 " Tag completion - requires tags file
 inoremap <C-x><C-]> <C-x><C-]>
-
 " -----------------------------------------------------------------------------
 " LEADER KEY AND GENERAL MAPPINGS
 " -----------------------------------------------------------------------------
@@ -298,24 +315,8 @@ nnoremap <leader><space> :noh<CR>
 nnoremap <leader>s :set spell!<CR>
 
 " -----------------------------------------------------------------------------
-" OPTIMIZED CLIPBOARD FOR WSL2
+" CLIPBOARD OPTIMIZATION - WSL2-Windows Integration
 " -----------------------------------------------------------------------------
-if has('wsl')
-    " Use win32yank for better performance
-    let g:clipboard = {
-        \ 'name': 'WslClipboard',
-        \ 'copy': {
-        \    '+': 'win32yank.exe -i --crlf',
-        \    '*': 'win32yank.exe -i --crlf',
-        \  },
-        \ 'paste': {
-        \    '+': 'win32yank.exe -o --lf',
-        \    '*': 'win32yank.exe -o --lf',
-        \ },
-        \ 'cache_enabled': 0,
-        \ }
-endif
-
 " Copy to Windows clipboard
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
@@ -375,15 +376,11 @@ nnoremap <leader>bn :bnext<CR>
 nnoremap <leader>bd :bdelete<CR>
 
 " -----------------------------------------------------------------------------
-" WILDMENU CONFIGURATION
-" -----------------------------------------------------------------------------
 set wildmenu
 set wildmode=longest,full
 set wildoptions=pum
-set wildcharm=<C-Z>                     " Programmatic wildmenu trigger
-set wildignorecase                      " Case insensitive filename completion
 
-" Wildmenu ignoring
+" Improve wildmenu ignoring
 set wildignore+=*.o,*.obj,*~,*.exe,*.a,*.pdb,*.lib
 set wildignore+=*.so,*.dll,*.swp,*.egg,*.jar,*.class,*.pyc,*.pyo,*.bin,*.dex
 set wildignore+=*.zip,*.7z,*.rar,*.gz,*.tar,*.gzip,*.bz2,*.tgz,*.xz
@@ -400,24 +397,90 @@ set wildignore+=*.ppt,*.pptx,*.doc,*.docx,*.xlt,*.xls,*.xlsx,*.odt,*.wps
 set wildignore+=*.msi,*.crx,*.deb,*.vfd,*.apk,*.ipa,*.bin,*.msu
 set wildignore+=*.gba,*.sfc,*.078,*.nds,*.smd,*.smc
 set wildignore+=*.linux2,*.win32,*.darwin,*.freebsd,*.linux,*.android
-
 " -----------------------------------------------------------------------------
-" COLOR SCHEME
+" https://github.com/sainnhe/edge.git 
+" set background=dark
+" colorscheme edge
 " -----------------------------------------------------------------------------
 colorscheme habamax
-
-" Status line
+" -----------------------------------------------------------------------------
 set noshowmode
 set laststatus=2
 
-" Transparency and visual tweaks
+hi statusline   cterm=NONE ctermfg=0 ctermbg=7   guibg=#C1C2D0 guifg=#000000
+hi statuslinenc cterm=NONE ctermfg=0 ctermbg=240 guibg=#616270 guifg=#000000
+
+" Initialize mode dictionary before use
+let g:currentmode={
+    \ 'n'      : 'Normal',
+    \ 'no'     : 'Normal-Operator Pending',
+    \ 'v'      : 'Visual',
+    \ 'V'      : 'V-Line',
+    \ '\<C-V>' : 'V-Block',
+    \ 's'      : 'Select',
+    \ 'S'      : 'S-Line',
+    \ '\<C-S>' : 'S-Block',
+    \ 'i'      : 'Insert',
+    \ 'R'      : 'Replace',
+    \ 'Rv'     : 'V-Replace',
+    \ 'c'      : 'Command',
+    \ 'cv'     : 'Vim Ex',
+    \ 'ce'     : 'Ex',
+    \ 'r'      : 'Prompt',
+    \ 'rm'     : 'More',
+    \ 'r?'     : 'Confirm',
+    \ '!'      : 'Shell',
+    \ 't'      : 'Terminal'
+    \}
+
+augroup ModeEvents
+    autocmd!
+    au InsertEnter * hi statusline cterm=NONE ctermfg=0 ctermbg=10 guibg=#7BC86F
+    au InsertLeave * hi statusline cterm=NONE ctermfg=0 ctermbg=7 guibg=#C1C2D0
+    au ModeChanged *:[vV\x16]* hi statusline cterm=NONE ctermfg=0 ctermbg=13 guibg=#C990DC
+    au Modechanged [vV\x16]*:* hi statusline cterm=NONE ctermfg=0 ctermbg=7 guibg=#C1C2D0
+augroup end
+
+function! LoadStatusLine()
+    let g:left_sep='│'
+    let g:right_sep='│'
+
+    " Add error handling for mode lookup
+    function! GetMode()
+        let l:mode = mode()
+        return get(g:currentmode, l:mode, l:mode)
+    endfunction
+
+    set statusline=\ %{toupper(GetMode())}
+    set statusline+=\ %{g:left_sep}
+    set statusline+=\ %n
+    set statusline+=\ %{g:left_sep}
+    set statusline+=\ %f%m\ %y
+    set statusline+=\ %{g:left_sep}
+    set statusline+=\ %{&ff}\ %{&fenc!=''?&fenc:&enc}
+    set statusline+=\ %{g:left_sep}
+    set statusline+=\ %=
+    set statusline+=\ %{g:right_sep}
+    set statusline+=\ %l/%L,%v
+    set statusline+=\ %{g:right_sep}
+    set statusline+=\ %P\ 
+endfunction
+
+call LoadStatusLine()
+
+" -----------------------------------------------------------------------------
 hi Normal guibg=NONE ctermbg=NONE
+
 hi CursorLine guibg=#202130
+
 hi Comment cterm=italic gui=italic
+
 hi VertSplit ctermbg=NONE guibg=NONE ctermfg=7 guifg=#c1c2d0
-hi TabLine guifg=#9192a0 guibg=#303140 gui=none
-hi TabLineSel guifg=#a1a2b0 guibg=#101120 gui=bold
-hi TabLineFill guifg=#9192a0 guibg=#303140 gui=none
+
+hi TabLine      guifg=#9192a0 guibg=#303140 gui=none
+hi TabLineSel   guifg=#a1a2b0 guibg=#101120 gui=bold
+hi TabLineFill  guifg=#9192a0 guibg=#303140 gui=none
+
 hi Visual guifg=NONE guibg=#303140
 
 " -----------------------------------------------------------------------------
@@ -488,11 +551,14 @@ autocmd FileType typescript setlocal foldmethod=syntax
 set ttyfast
 set lazyredraw
 
+" Don't update display while executing macros
+set lazyredraw
+
 " Faster scrolling
 set scrolljump=5
 
 " Better completion - Sources: current buffer, other windows, other loaded buffers, 
-" unloaded buffers, tags, included files
+" unloaded buffers, tags, included files (spell removed)
 set complete=.,w,b,u,t,i
 
 " Timeout for key sequences
@@ -527,6 +593,41 @@ set matchtime=2
 " Mouse disabled to prevent interference with terminal applications
 set mouse=
 
+" Enable clipboard integration
+if has('wsl')
+    let g:clipboard = {
+        \ 'name': 'WslClipboard',
+        \ 'copy': {
+        \    '+': 'clip.exe',
+        \    '*': 'clip.exe',
+        \  },
+        \ 'paste': {
+        \    '+': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        \    '*': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        \ },
+        \ 'cache_enabled': 0,
+        \ }
+    
+    " Workaround para Vim sem clipboard (fallback)
+    if !has('clipboard')
+        " Auto-copiar yanks para Windows clipboard
+        augroup WSLYank
+            autocmd!
+            autocmd TextYankPost * if v:event.operator ==# 'y' | call system('clip.exe', @0) | endif
+        augroup END
+        
+        " Comando alternativo para copiar arquivo todo
+        command! -nargs=0 CopyAll w !clip.exe
+        nnoremap <leader>ya :CopyAll<CR>:echo "Arquivo copiado via pipe!"<CR>
+    endif
+elseif has('clipboard')
+    if has('unnamedplus')
+        set clipboard=unnamedplus
+    else
+        set clipboard=unnamed
+    endif
+endif
+
 " Better formatting
 set formatoptions+=j " Delete comment character when joining commented lines
 set formatoptions+=n " Recognize numbered lists
@@ -540,7 +641,7 @@ set viminfo='100,<50,s10,h
 " STARTUP OPTIMIZATIONS
 " -----------------------------------------------------------------------------
 
-" Only load plugins when needed - keep only essentials
+" Only load plugins when needed
 let g:loaded_gzip = 1
 let g:loaded_tar = 1
 let g:loaded_tarPlugin = 1
@@ -557,5 +658,5 @@ let g:loaded_netrwPlugin = 1
 let g:loaded_netrwSettings = 1
 let g:loaded_netrwFileHandlers = 1
 
-" Disable built-in matchit
+" Disable built-in matchit (we might use better alternatives)
 let g:loaded_matchit = 1

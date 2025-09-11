@@ -16,6 +16,10 @@
             "id": "User.paste"
         },
         {
+            "command": "find",
+            "id": "User.find"
+        },
+        {
             "command": 
             {
                 "action": "splitPane",
@@ -23,10 +27,6 @@
                 "splitMode": "duplicate"
             },
             "id": "User.splitPane.A6751878"
-        },
-        {
-            "command": "find",
-            "id": "User.find"
         }
     ],
     "alwaysOnTop": false,
@@ -65,12 +65,12 @@
             "keys": "alt+shift+d"
         },
         {
-            "id": "Terminal.SplitPaneDown",
-            "keys": "alt+shift+h"
-        },
-        {
             "id": "Terminal.ToggleFullscreen",
             "keys": "alt+enter"
+        },
+        {
+            "id": "Terminal.SplitPaneDown",
+            "keys": "alt+shift+h"
         },
         {
             "id": "Terminal.SplitPaneRight",
@@ -125,7 +125,7 @@
             {
                 "bellStyle": "none",
                 "colorScheme": "Ubuntu",
-                "commandline": "wsl.exe -d Ubuntu-24.04",
+                "commandline": "wsl.exe -d Ubuntu-24.04 -- zsh",
                 "font": 
                 {
                     "face": "Hack Nerd Font",
@@ -138,7 +138,9 @@
                 "opacity": 100,
                 "padding": "8, 2, 8, 2",
                 "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc",
-                "startingDirectory": "//wsl.localhost/Ubuntu-24.04/home/notebook"
+                "startingDirectory": "//wsl.localhost/Ubuntu-24.04/home/notebook",
+                "suppressApplicationTitle": true,
+                "useAcrylic": true
             },
             {
                 "commandline": "C:\\Programa\u00e7\u00e3o\\Git\\bin\\bash.exe -i -l",
@@ -148,6 +150,26 @@
                 "name": "Git Bash",
                 "source": "Git",
                 "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "bellStyle": "none",
+                "colorScheme": "Dracula",
+                "commandline": "wsl.exe -d archlinux",
+                "font": 
+                {
+                    "face": "Hack Nerd Font",
+                    "size": 10,
+                    "weight": "medium"
+                },
+                "guid": "{a5a97cb8-8961-5535-816d-772efe0c6a3f}",
+                "hidden": false,
+                "icon": "\uf303",
+                "name": "Arch Linux",
+                "opacity": 100,
+                "padding": "8, 2, 8, 2",
+                "startingDirectory": "//wsl.localhost/archlinux/root",
+                "suppressApplicationTitle": true,
+                "useAcrylic": false
             }
         ]
     },
@@ -215,7 +237,7 @@
             "cyan": "#2AA1B3",
             "foreground": "#FFFFFF",
             "green": "#26A269",
-            "name": "Ubuntu",
+            "name": "Ubuntu (modified)",
             "purple": "#A347BA",
             "red": "#C01C28",
             "selectionBackground": "#5E5C64",
