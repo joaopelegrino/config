@@ -464,6 +464,8 @@ autocmd FileType yaml setlocal foldmethod=indent
 autocmd FileType sh,bash,zsh setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType sh,bash,zsh setlocal expandtab
 autocmd FileType sh,bash,zsh setlocal foldmethod=syntax
+set shellcmdflag=-ic
+set shell=zsh
 
 " Docker Settings
 autocmd FileType dockerfile setlocal tabstop=2 shiftwidth=2 softtabstop=2

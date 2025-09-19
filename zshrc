@@ -484,3 +484,48 @@ alias cced="vim '/home/notebook/workspace/especialistas/claude-code/acao-cc.md'"
 alias arch="vim '/home/notebook/workspace/especialistas/fundamentos/guias-passo-a-passo/arch-minimal-setup.md'"
 
 alias concat-md="PROJETO=\$(basename \"\$PWD\" | tr \"a-z-\" \"A-Z_\"); { echo \"# 📚 \$PROJETO - DOCUMENTAÇÃO COMPLETA\"; echo \"**Gerado em:** \$(date)\"; echo \"\"; find . -name \"*.md\" -type f | sort | while read file; do echo -e \"\n---\n## 📁 \$file\n\"; cat \"\$file\"; done; } > \"\${PROJETO}_COMPLETO.md\" && echo \"✅ Gerado: \${PROJETO}_COMPLETO.md\""
+
+alias concat-parcial='concat_parcial_files() {
+  if [ $# -eq 0 ]; then
+    echo "❌ Uso: concat-parcial <arquivo1.md> <arquivo2.md> [...]"
+    echo "   Exemplo: concat-parcial README.md INSTALL.md CONFIG.md"
+    return 1
+  fi
+  
+  PROJETO=$(basename "$PWD" | tr "a-z-" "A-Z_")
+  OUTPUT_FILE="${PROJETO}_ARQUIVOS_IMPORTANTES.md"
+  
+  {
+    echo "# 📚 $PROJETO - ARQUIVOS IMPORTANTES"
+    echo "**Gerado em:** $(date)"
+    echo "**Arquivos incluídos:** $*"
+    echo ""
+    
+    for file in "$@"; do
+      if [ -f "$file" ]; then
+        echo -e "\n---\n## 📁 $file\n"
+        cat "$file"
+      else
+        echo -e "\n---\n## ❌ $file (não encontrado)\n"
+      fi
+    done
+  } > "$OUTPUT_FILE"
+  
+  echo "✅ Gerado: $OUTPUT_FILE"
+}; concat_parcial_files'
+
+alias vnotas="vim '/home/notebook/workspace/especialistas/aplicando/notas11-09.md'"
+alias ned="vim '/home/notebook/workspace/especialistas/desenvovlimento/notas/notas-12-09.md'"
+alias sessao='script -c "zsh -c \"PROMPT=\\\"$ \\\" exec zsh\"" ~/logs/sessoes/sessao-$(date +%Y%m%d_%H%M%S)-essencial.txt'
+
+
+alias claude="/home/notebook/.claude/local/claude"
+
+# Warp Terminal Configuration - Added seg 15 set 2025 07:18:25 -03
+# Previne conflitos de notebook creation no Warp
+export WARP_CONFIG_DIR="$HOME/.warp"
+[ -f "$HOME/.warp/startup.sh" ] && source "$HOME/.warp/startup.sh"
+
+export WASMTIME_HOME="$HOME/.wasmtime"
+
+export PATH="$WASMTIME_HOME/bin:$PATH"
