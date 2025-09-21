@@ -250,36 +250,67 @@ pwdc() {
 # Função para mostrar caminho atual e tree da pasta
 pwdct() {
   local current_path
-  
+
   # Obtém o caminho atual
   current_path="$(pwd)"
-  
+
   # Imprime o caminho atual
   echo "📁 $current_path"
   echo
-  
+
   # Prepara o conteúdo para clipboard
   local clipboard_content tree_output
-  
+
   # Verifica se o comando tree está disponível
   if command -v tree >/dev/null 2>&1; then
     echo "🌳 Estrutura do diretório:"
-    tree_output=$(tree -L 2 -a --dirsfirst)
+    # Usa tree com opções mais compatíveis e sem caracteres Unicode
+    tree_output=$(tree -L 2 -a --dirsfirst --charset ascii)
     echo "$tree_output"
   else
     echo "🌳 Estrutura do diretório (usando ls):"
-    tree_output=$(ls -la)
+    # Fallback usando ls com formato mais organizado
+    tree_output=$(ls -laF --group-directories-first 2>/dev/null || ls -laF)
     echo "$tree_output"
   fi
-  
+
   # Prepara conteúdo completo para clipboard
   clipboard_content="$current_path"$'\n\n'"$tree_output"
-  
+
   # Copia para clipboard (funciona no WSL)
   echo -n "$clipboard_content" | clip.exe 2>/dev/null || echo -n "$clipboard_content" | xclip -selection clipboard 2>/dev/null
-  
+
   echo
   echo "📋 Conteúdo copiado para clipboard!"
+}
+
+# Função alternativa para listagem simples sem caracteres especiais
+pwdct_simple() {
+  local current_path
+
+  # Obtém o caminho atual
+  current_path="$(pwd)"
+
+  # Imprime o caminho atual
+  echo "Current directory: $current_path"
+  echo
+
+  # Prepara o conteúdo para clipboard
+  local clipboard_content tree_output
+
+  echo "Directory structure:"
+  # Usa apenas ls com formato simples
+  tree_output=$(ls -laF --group-directories-first 2>/dev/null || ls -laF)
+  echo "$tree_output"
+
+  # Prepara conteúdo completo para clipboard
+  clipboard_content="$current_path"$'\n\n'"$tree_output"
+
+  # Copia para clipboard (funciona no WSL)
+  echo -n "$clipboard_content" | clip.exe 2>/dev/null || echo -n "$clipboard_content" | xclip -selection clipboard 2>/dev/null
+
+  echo
+  echo "Content copied to clipboard!"
 }
 # --- Fim Funções ---
 
@@ -520,6 +551,9 @@ alias sessao='script -c "zsh -c \"PROMPT=\\\"$ \\\" exec zsh\"" ~/logs/sessoes/s
 
 
 alias claude="/home/notebook/.claude/local/claude"
+
+# Alias para função pwdct alternativa
+alias pwds="pwdct_simple"
 
 # Warp Terminal Configuration - Added seg 15 set 2025 07:18:25 -03
 # Previne conflitos de notebook creation no Warp

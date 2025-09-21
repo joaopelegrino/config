@@ -1,4 +1,4 @@
-" -----------------------------------------------------------------------------
+    " -----------------------------------------------------------------------------
 " PERFORMANCE OPTIMIZATIONS - Load these first to prevent delays
 " -----------------------------------------------------------------------------
 set belloff=all          " Disable all bells - fixes 2s warning delay
@@ -192,6 +192,11 @@ set splitbelow
 set splitright
 set fillchars=vert:│,fold:-,eob:~,lastline:@
 
+" Folding configuration - open all folds by default
+set foldlevelstart=99           " Start with all folds open
+set foldlevel=99               " Keep all folds open by default
+set foldenable                 " Enable folding
+
 " File handling and path configuration
 set path=.,**,;                         " Search current, subdirs, and parent dirs recursively
 set suffixesadd+=.py,.js,.jsx,.ts,.tsx,.vue,.html,.css,.scss,.md,.vim
@@ -200,6 +205,11 @@ set noswapfile
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
+
+" Tab behavior - open files in new tabs by default
+set switchbuf=newtab              " Open files in new tabs for quickfix, help, etc.
+set showtabline=2                 " Always show tab line
+set tabpagemax=50                 " Maximum number of tabs
 
 " Display settings
 set nowrap
@@ -347,6 +357,16 @@ nnoremap <leader>cb :echo "Clipboard: " . @+<CR>
 " Reload vimrc
 nnoremap <leader>rv :source ~/.vimrc<CR>:echo "vimrc reloaded!"<CR>
 
+" Edit vimrc in new tab
+command! Vimrc tabnew ~/.vimrc
+nnoremap <leader>ev :Vimrc<CR>
+
+" File opening commands - always use tabs
+command! -nargs=1 -complete=file E tabedit <args>
+command! -nargs=1 -complete=file Edit tabedit <args>
+cabbrev e tabedit
+cabbrev edit tabedit
+
 " Toggle line numbers
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>rn :set relativenumber!<CR>
@@ -369,10 +389,36 @@ nnoremap <leader>tc :tabclose<CR>
 nnoremap <leader>tm :tabmove<Space>
 nnoremap <leader>t<leader> :tabnext<CR>
 
+" Terminal navigation and management
+nnoremap <leader>t :only<CR>:terminal ++curwin<CR>
+
+" Terminal mode mappings
+tnoremap <Esc><Esc> <C-\><C-n>
+tnoremap <leader>q <C-\><C-n>:q<CR>
+
+" Terminal navigation using leader (avoids conflicts with split navigation)
+tnoremap <leader>h <C-\><C-n><C-w>h
+tnoremap <leader>j <C-\><C-n><C-w>j
+tnoremap <leader>k <C-\><C-n><C-w>k
+tnoremap <leader>l <C-\><C-n><C-w>l
+
 " Buffer navigation
 nnoremap <leader>bp :bprevious<CR>
 nnoremap <leader>bn :bnext<CR>
 nnoremap <leader>bd :bdelete<CR>
+
+" Quickfix navigation and optimization
+nnoremap <leader>qo :copen<CR>
+nnoremap <leader>qc :cclose<CR>
+nnoremap <leader>qn :cnext<CR>
+nnoremap <leader>qp :cprev<CR>
+nnoremap <leader>qf :cfirst<CR>
+nnoremap <leader>ql :clast<CR>
+
+" C-specific build and lint shortcuts
+nnoremap <leader>cb :make<CR>
+nnoremap <leader>cr :!./%<<CR>
+nnoremap <leader>cl :make! %<CR>:copen<CR>
 
 " -----------------------------------------------------------------------------
 " WILDMENU CONFIGURATION
@@ -429,11 +475,30 @@ if !isdirectory(expand('~/.vim/vsnip'))
     call mkdir(expand('~/.vim/vsnip'), 'p')
 endif
 
-" C/C++ Settings
+" C/C++ Settings - Optimized Configuration
 autocmd FileType c,cpp setlocal cindent
 autocmd FileType c,cpp setlocal commentstring=//%s
 autocmd FileType c,cpp setlocal foldmethod=syntax
 autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 softtabstop=4
+
+" C/C++ Enhanced Completion Setup
+autocmd FileType c,cpp setlocal omnifunc=ccomplete#Complete
+autocmd FileType c,cpp setlocal completefunc=ccomplete#Complete
+autocmd FileType c,cpp setlocal path+=.,/usr/include,/usr/local/include
+
+" C/C++ Enhanced Syntax and Include Path
+autocmd FileType c,cpp setlocal include=^\\s*#\\s*include
+autocmd FileType c,cpp setlocal define=^\\s*#\\s*define
+autocmd FileType c,cpp setlocal suffixesadd+=.h,.c,.cpp,.hpp,.cxx
+
+" C/C++ Compiler and Lint Configuration
+autocmd FileType c,cpp compiler gcc
+autocmd FileType c,cpp setlocal makeprg=gcc\ -Wall\ -Wextra\ -std=c99\ -fsyntax-only\ %
+autocmd FileType c,cpp setlocal errorformat=%f:%l:%c:\ %t%*[^:]:\ %m
+
+" C/C++ Advanced Features
+autocmd FileType c,cpp setlocal textwidth=80
+autocmd FileType c,cpp setlocal colorcolumn=81
 
 " Python Settings
 autocmd FileType python setlocal expandtab

@@ -1,6 +1,6 @@
 # 📚 Manual Completo do Ambiente de Desenvolvimento
 
-**Última atualização:** 15/09/2025
+**Última atualização:** 21/09/2025
 **Sistema:** Windows 11 + WSL2 Ubuntu 24.04.3 LTS + VSCode + Warp Terminal + Zsh
 **Usuário:** notebook  
 **Diretório Base:** `/home/notebook/workspace`  
@@ -59,14 +59,21 @@ reload      # Recarregar configurações do shell
 
 ### 📊 Estatísticas da Configuração
 
-- **580+ linhas** de configuração otimizada (+18% desde última atualização)
+- **615+ linhas** de configuração otimizada (+3% desde última atualização)
 - **17 plugins** + **MuComplete** (18 plugins total)
 - **Sistema de Completion Profissional** implementado
 - **LSP** integrado para C, Python, TypeScript
+- **🆕 Terminal Integrado** com modo only e navegação completa
+- **🆕 Tab-First Workflow** - todos os arquivos abrem em novas abas por padrão
+- **🆕 Folding Aberto** - código sempre expandido por padrão
+- **🆕 Comando :Vimrc** para edição rápida de configurações
+- **Configuração C Nativa Completa** com completion + linting + quickfix
 - **Git integration** completa com vim-fugitive
 - **FZF** para busca fuzzy ultrarrápida
 - **MuComplete** com chains por linguagem
 - **Clipboard WSL-Windows** totalmente funcional com fallback
+- **Quickfix Navigation** para workflow profissional
+- **GCC Integration** nativo para desenvolvimento C
 
 ### ⚡ Atalhos Principais
 
@@ -88,6 +95,16 @@ Ctrl+F          " Busca texto com ripgrep
 ,<space>        " Limpar highlight de busca
 ,s              " Toggle spell check
 ,n              " Toggle números de linha
+
+" 🆕 Terminal Integrado (NOVO)
+,t              " Abrir terminal em modo only (tela cheia)
+<Esc><Esc>      " Sair do modo terminal
+,q              " Fechar terminal (no modo terminal)
+
+" 🆕 Configurações Rápidas (NOVO)
+,ev             " Editar vimrc em nova aba
+,rv             " Recarregar vimrc
+:Vimrc          " Comando personalizado para abrir vimrc
 ```
 
 #### 🔄 Git Integration (Fugitive)
@@ -130,11 +147,51 @@ Enter/→         " Aceitar sugestão
 
 #### 📝 Chains de Completion por Linguagem
 - **HTML/CSS**: Omni → Keywords → Dictionary
-- **JavaScript/TypeScript**: Omni → Keywords → Dictionary  
+- **JavaScript/TypeScript**: Omni → Keywords → Dictionary
 - **Python**: Omni → Keywords → Dictionary
+- **🆕 C/C++**: Omni → Keywords (ccomplete#Complete integration)
 - **Markdown**: Dictionary → Spell → Keywords
 - **Vim Scripts**: Commands → Keywords
-- **C/C++**: Omni → Keywords
+
+#### 🆕 Tab-First Workflow (NOVO)
+```vim
+" Abertura de arquivos sempre em novas abas
+:e arquivo.txt        " → Abre em nova aba (automaticamente)
+:edit main.py         " → Abre em nova aba (automaticamente)
+:E header.h           " → Comando personalizado para nova aba
+:Edit script.sh       " → Comando personalizado para nova aba
+
+" Configurações ativas:
+set switchbuf=newtab  " Quickfix e help abrem em abas
+set showtabline=2     " Sempre mostrar linha de abas
+set tabpagemax=50     " Máximo 50 abas
+```
+
+#### 🆕 Folding Otimizado (NOVO)
+```vim
+" Código sempre expandido por padrão
+set foldlevelstart=99  " Inicia com tudo aberto
+set foldlevel=99      " Mantém tudo aberto
+
+" Comandos de folding quando necessário:
+za    " Toggle dobra no cursor
+zM    " Fechar todas as dobras (visão estrutural)
+zR    " Reabrir todas as dobras (volta ao padrão)
+```
+
+#### 🆕 Quickfix & C Development
+```vim
+" Quickfix Navigation
+,qo             " Abrir quickfix window
+,qc             " Fechar quickfix window
+,qn             " Próximo erro/warning
+,qp             " Erro/warning anterior
+
+" C Development Shortcuts
+,cb             " Build projeto C (make)
+,cm             " Lint com GCC + quickfix automático (C Make)
+,cr             " Run programa compilado
+```
 
 ### 📁 Estrutura de Arquivos Vim
 
@@ -1076,6 +1133,77 @@ commands:
 3. **Repetição Inteligente**: Comando `.` repete última ação, macros para tarefas complexas
 4. **Fluxo Sem Mouse**: Mãos sempre no teclado, navegação eficiente
 
+### 🔧 Configurações Específicas por Linguagem (NOVO)
+
+#### 🆕 Linguagem C - Configuração Otimizada
+**Implementado:** Sistema completo para desenvolvimento C profissional
+
+##### Completion System para C
+```vim
+" C/C++ Enhanced Completion - Auto-ativado para arquivos .c/.cpp
+autocmd FileType c,cpp setlocal omnifunc=ccomplete#Complete
+autocmd FileType c,cpp setlocal completefunc=ccomplete#Complete
+autocmd FileType c,cpp setlocal path+=.,/usr/include,/usr/local/include
+
+" Atalhos de Completion:
+Ctrl+x Ctrl+o   " Omni completion (funções C padrão)
+Ctrl+x Ctrl+f   " Completion de includes (#include "header.h")
+Ctrl+x Ctrl+i   " Completion de arquivos incluídos
+```
+
+##### Sistema de Linting Nativo para C
+```vim
+" Compilação e lint automático - GCC com warnings otimizados
+autocmd FileType c,cpp compiler gcc
+autocmd FileType c,cpp setlocal makeprg=gcc\ -Wall\ -Wextra\ -std=c99\ -fsyntax-only\ %
+
+" Shortcuts para desenvolvimento C:
+,cb             " Compilar projeto (build)
+,cm             " Lint com quickfix automático (C Make)
+,cr             " Executar programa compilado
+```
+
+##### Quickfix Navigation para C
+```vim
+" Navegação otimizada para errors/warnings
+,qo             " Abrir quickfix window
+,qc             " Fechar quickfix window
+,qn             " Próximo erro/warning
+,qp             " Erro/warning anterior
+,qf             " Primeiro erro
+,ql             " Último erro
+```
+
+##### Features Avançadas C
+```vim
+" Include path inteligente para headers
+autocmd FileType c,cpp setlocal include=^\\s*#\\s*include
+autocmd FileType c,cpp setlocal define=^\\s*#\\s*define
+autocmd FileType c,cpp setlocal suffixesadd+=.h,.c,.cpp,.hpp,.cxx
+
+" Line guide para código C (80 caracteres)
+autocmd FileType c,cpp setlocal textwidth=80
+autocmd FileType c,cpp setlocal colorcolumn=81
+```
+
+##### Workflow C Completo
+```bash
+# 1. Criar projeto C
+vim main.c
+
+# 2. Editar com completion inteligente
+# Digite "str" + Ctrl+X Ctrl+O → sugere string.h functions
+# Digite "prin" + Ctrl+X Ctrl+O → sugere printf, etc.
+
+# 3. Lint e build
+,cm                " Verificar erros/warnings
+,qn ,qp           " Navegar entre problemas
+,cb               " Build completo
+
+# 4. Testar
+,cr               " Executar programa
+```
+
 ### Técnicas Avançadas de Edição
 
 #### Text Objects - A Gramática do Vim
@@ -1747,56 +1875,67 @@ Esta seção documenta os 3 scripts funcionais essenciais mantidos neste reposit
 
 ---
 
-## 🎯 Resumo das Últimas Atualizações (15/09/2025)
+## 🎯 Resumo das Últimas Atualizações (21/09/2025)
 
-### 🚀 **WARP TERMINAL CONFIRMADO** - Terminal Principal Identificado
+### 🚀 **VIM MODERNIZADO** - Terminal Integrado e Workflow Otimizado
+- **🆕 Terminal Integrado**: `,t` abre terminal em modo only (tela cheia)
+- **🆕 Tab-First Workflow**: Todos os arquivos abrem em novas abas automaticamente
+- **🆕 Folding Inteligente**: Código sempre expandido por padrão (foldlevelstart=99)
+- **🆕 Comando :Vimrc**: Acesso instantâneo às configurações (`,ev`)
+- **🆕 Navegação Terminal**: `<Esc><Esc>` para sair, `,h/j/k/l` para navegar
+- **615+ linhas** de configuração (+20 linhas de melhorias)
+
+### 🎮 **COMANDOS NOVOS IMPLEMENTADOS**
+```vim
+,t              " Terminal tela cheia com :only
+,ev             " Editar vimrc em nova aba
+:Vimrc          " Comando personalizado para vimrc
+:e arquivo      " Sempre abre em nova aba (automático)
+:E arquivo      " Comando explícito para nova aba
+<Esc><Esc>      " Sair do modo terminal
+```
+
+### ⚙️ **CONFIGURAÇÕES AUTOMATIZADAS**
+- **switchbuf=newtab**: Quickfix e help sempre em abas
+- **showtabline=2**: Linha de abas sempre visível
+- **foldlevelstart=99**: Código expandido por padrão
+- **Terminal ++curwin**: Força terminal na janela atual
+
+### 🚀 **WARP TERMINAL** - Terminal Principal (Mantido)
 - **Terminal ativo**: Warp Terminal detectado via $TERM_PROGRAM
 - **Integração WSL2**: ✅ Funcionando perfeitamente
-- **Variáveis Warp**: Todas configuradas corretamente
-- **Atalhos e funcionalidades**: Documentados completamente
-- **Workflows**: Suporte nativo para múltiplas abas e painéis
-- **Compatibilidade**: Total com Zsh + Vim + Yazi + Claude Code
+- **Compatibilidade**: Total com todas as novas funcionalidades Vim
 
-### 🤖 Claude Code - Configuração Otimizada (Mantida)
-- **Atualizado para v1.0.113** (de v1.0.92)
-- **Funcionando perfeitamente** no Warp Terminal
+### 🤖 **Claude Code** - Configuração Otimizada (Mantida)
+- **v1.0.113** funcionando perfeitamente no Warp Terminal
 - **Auto-updates funcionando** corretamente
-- **Integração AI**: Nativa com Warp Terminal
+- **Integração completa** com novo workflow Vim
 
-### ✅ Sistema de Completion Profissional (Mantido)
+### ✅ **Sistema de Completion Profissional** (Mantido)
 - **MuComplete instalado** e integrado com vsnip + LSP
 - **18 plugins totais** (17 + MuComplete)
-- **Mapeamentos nativos completos** para todos os tipos de completion
-- **Chains por linguagem** configuradas (HTML, JS, Python, Markdown, etc.)
-- **580+ linhas** de configuração otimizada
+- **Chains por linguagem** configuradas e funcionais
+- **Completion contextual** ativo e otimizado
 
-### 🔍 **DIAGNÓSTICO COMPLETO REALIZADO** - Descobertas Importantes
-- **Node.js atualizado**: v20.19.4 (era v18.19.1 no README)
-- **Docker Desktop**: ✅ **ATIVADO** - v28.4.0 + Compose v2.39.2 funcionais
-- **Build tools**: 🔵 Faltando meson + ninja (ferramentas 2024-2025)
-- **Yazi versão**: 25.5.31 (atualizada e funcional)
-- **VSCode tasks**: ✅ Configurados mas paths incorretos
-- **Kubernetes**: ✅ Cluster local ativo (18 pods)
+### 🔧 **Melhorias de Produtividade Aplicadas**
+- **Workflow baseado em abas**: Organização visual superior
+- **Terminal dedicado**: Foco total em comandos shell
+- **Configuração acessível**: Edição instantânea de settings
+- **Código sempre visível**: Sem surpresas de folding fechado
+- **Navegação intuitiva**: Atalhos consistentes e memoráveis
 
-### 🔧 Correções Aplicadas
-- **Problema Warp "Failed to Create Notebook"**: ✅ **RESOLVIDO**
-- **Estrutura ~/.warp criada**: Configuração completa + notebooks funcionais
-- **Claude Code otimizado**: v1.0.113 funcionando no Warp
-- **SSH Agent mantido**: Sem conflitos com Warp notebooks
-- **README atualizado**: Todas as descobertas e soluções documentadas
-- **Warp Terminal**: Completamente funcional com troubleshooting aplicado
-
-### 📋 Funcionalidades Ativas
-- **Claude Code v1.0.113** totalmente funcional
-- **Auto-completion contextual** com 2+ caracteres
-- **Tab inteligente** (MuComplete → vsnip → Tab normal)
-- **Completion nativo** completo (`Ctrl+x` combinations)
-- **LSP integration** mantida e aprimorada
+### 📋 **Funcionalidades Ativas Expandidas**
+- **Terminal integrado** com modo only automático
+- **Tab-first workflow** para todos os comandos de arquivo
+- **Folding inteligente** com código expandido
+- **Comando :Vimrc** para configuração rápida
+- **Auto-completion contextual** mantida
+- **LSP integration** otimizada e funcional
 
 ---
 
-**📅 Criado:** 18/08/2025  
-**🔄 Última atualização:** 15/09/2025  
-**✅ Status:** Sistema profissional 100% implementado e funcional + Claude Code otimizado  
-**📍 Localização principal:** `/home/notebook/config/`  
-**🚀 Comandos rápidos:** `claude doctor` | `./vim-diagnostic.sh` | `./diagnostico-ambiente.sh` | `reload` | `yy` | `sync_repos`
+**📅 Criado:** 18/08/2025
+**🔄 Última atualização:** 21/09/2025
+**✅ Status:** Sistema profissional 100% implementado + Vim modernizado com terminal integrado e workflow em abas
+**📍 Localização principal:** `/home/notebook/config/`
+**🚀 Comandos rápidos:** `,t` (terminal) | `,ev` (editar vimrc) | `claude doctor` | `./vim-diagnostic.sh` | `reload` | `yy`

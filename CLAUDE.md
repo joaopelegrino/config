@@ -138,6 +138,180 @@ docker-compose -f docker-compose.dev.yml up  # If present in project
 3. Git integration via vim-fugitive (`,gs` for status, `,gc` for commit)
 4. LSP support for C, Python, TypeScript development
 
+### C Development Workflows and Advanced Use Cases
+
+#### LSP-Powered C Development
+The environment includes **clangd** LSP server providing enterprise-grade C development features:
+
+**Navigation Workflow:**
+```vim
+gd          " Go to definition (functions, variables, types)
+gr          " Find all references across entire project
+gi          " Go to implementation
+gt          " Go to type definition
+K           " Show documentation/hover info
+```
+
+**Code Intelligence:**
+```vim
+<leader>rn  " Intelligent rename across project
+[g / ]g     " Navigate diagnostics (errors/warnings)
+:LspStatus  " Check language server status
+:LspHover   " Manual documentation lookup
+```
+
+#### Advanced C Project Patterns
+
+**Large Codebase Navigation:**
+1. **Project-wide Symbol Search**: `Ctrl+F` → search for function/variable names
+2. **Header File Discovery**: `Ctrl+P` → type `.h` to filter headers
+3. **Source-Header Toggle**: Use `:edit %<.h` or `:edit %<.c` pattern
+4. **Cross-Reference Analysis**: `gr` on any symbol shows usage patterns
+
+**Debugging and Analysis Workflow:**
+```bash
+# Build with debug symbols
+make CFLAGS="-g -O0 -Wall -Wextra"
+
+# In Vim - check compiler diagnostics
+:LspDocumentDiagnostics  # Show all file issues
+[g                       # Jump to first error
+]g                       # Jump to next error
+```
+
+**Multi-File Refactoring Example:**
+```vim
+# Scenario: Rename function across 50+ files
+1. Place cursor on function name
+2. <leader>rn             # LSP rename
+3. Type new name
+4. LSP automatically updates all references
+5. :wa                   # Save all modified files
+```
+
+#### Build System Integration
+
+**Makefile Projects:**
+```bash
+# From Vim command line
+:!make                   # Build project
+:!make clean             # Clean build
+:!make test              # Run tests
+:copen                   # Open quickfix for errors
+```
+
+**CMake Projects:**
+```bash
+# Initial setup
+mkdir build && cd build
+cmake ..
+
+# From Vim
+:!cmake --build ../build
+:!cd ../build && make test
+```
+
+**Meson/Ninja Projects:**
+```bash
+# Setup
+meson setup builddir
+
+# Build from Vim
+:!ninja -C builddir
+:!cd builddir && meson test
+```
+
+#### Memory Management and Static Analysis
+
+**Integration with Analysis Tools:**
+```bash
+# Valgrind integration
+:!valgrind --leak-check=full ./program
+
+# Static analysis with clang-tidy
+:!clang-tidy *.c -- -I./include
+
+# Address sanitizer build
+:!make CFLAGS="-fsanitize=address -g"
+```
+
+**Code Quality Workflow:**
+1. **Lint on Save**: clangd provides real-time linting
+2. **Format Code**: Use clang-format integration
+3. **Memory Check**: Valgrind commands through Vim terminal
+4. **Security Scan**: Static analysis tools via `:!` commands
+
+#### Advanced Vim Features for C
+
+**Snippet-Driven Development:**
+```vim
+# Common C snippets (via vsnip)
+main<Tab>     # Main function template
+func<Tab>     # Function template
+struct<Tab>   # Struct definition
+if<Tab>       # If statement
+for<Tab>      # For loop
+```
+
+**Multi-File Session Management:**
+```vim
+# Save session for complex projects
+:mksession! project.vim
+
+# Restore session
+vim -S project.vim
+
+# Buffer management for large projects
+:ls           # List all buffers
+:b main.c     # Switch to main.c buffer
+:bd           # Delete current buffer
+```
+
+**Advanced Git Integration for C Projects:**
+```vim
+<leader>gd    # Git diff - see changes in split view
+<leader>gl    # Git log - view commit history
+:Gblame       # See line-by-line git blame
+:Gwrite       # Stage current file
+```
+
+#### Real-World C Development Scenarios
+
+**Scenario 1: Debugging Segmentation Fault**
+```vim
+1. :!gdb ./program
+2. In GDB: run, bt, print variables
+3. Back to Vim: navigate to problematic line
+4. Use K for documentation
+5. Check pointer usage with gr (references)
+```
+
+**Scenario 2: Adding New Feature to Legacy Codebase**
+```vim
+1. Ctrl+F → search for similar functionality
+2. gd on function names to understand structure
+3. gr to see usage patterns
+4. Create new function following existing patterns
+5. Use <leader>rn if refactoring is needed
+```
+
+**Scenario 3: Performance Optimization**
+```vim
+1. :!perf record ./program
+2. :!perf report
+3. Navigate to hot functions using Ctrl+P
+4. Analyze with LSP hover (K) for complexity
+5. Use gr to understand call patterns
+```
+
+**Scenario 4: Cross-Platform Development**
+```vim
+1. Use conditional compilation checking
+2. Ctrl+F to find #ifdef patterns
+3. LSP diagnostics for platform-specific issues
+4. Build testing: :!make linux && make windows
+```
+
 ### Project Structure Conventions
 - Configuration changes should be made in `/home/notebook/config/`
 - Use diagnostic scripts before and after major changes
