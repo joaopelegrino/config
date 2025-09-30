@@ -1,0 +1,74 @@
+{
+  "llm_main_template": {
+    "prefix": "llm-main",
+    "body": [
+      "",
+      "<-SESSÃO DE RESPONSABILIDADE DO USUÁRIO - APENAS PARA LEITURA->",
+      "",
+      "Realize a <tarefa> seguindo as <praticas>.",
+      "",
+      "<tarefa>",
+      "",
+      "$1",
+      "",
+      "  | Documento Original                       | Status        | Documento Atualizado                     | Alinhamento |",
+      "  |------------------------------------------|---------------|------------------------------------------|-------------|",
+      "  | $2                                       | ❌ Desalinhado | ✅ $3                                    | ✅ 100%      |",
+      "  | $4                                       | ❌ Desalinhado | ✅ $5                                    | ✅ 100%      |",
+      "  | Commands System                          | ✅ Atualizado  | ✅ All commands Seven-Layer enhanced    | ✅ 100%      |",
+      "  | Alignment Matrix                         | ➕ Criado      | ✅ alignment-commands-seven-layer-2025.md | ✅ 100%      |",
+      "",
+      "Arquivos chave atuais:",
+      "",
+      "bclaude/$6",
+      "",
+      "bdocs/$7",
+      "",
+      "",
+      "</tarefa>",
+      "",
+      "<-SESSÃO DE RESPONSABILIDADE DO USUÁRIO - APENAS PARA LEITURA->",
+      "",
+      "",
+      "<praticas>",
+      "",
+      "## Foco Principal",
+      "",
+      "**Especialista em Diagnóstico e Configuração para LLMs de Desenvolvimento + Seven-Layer Documentation Method**",
+      "",
+      "$8",
+      "",
+      "</praticas>"
+    ],
+    "description": "Template completo LLM-main.md"
+  },
+  "llm_task_only": {
+    "prefix": "llm-task",
+    "body": [
+      "<tarefa>",
+      "",
+      "$1",
+      "",
+      "  | Documento Original | Status | Documento Atualizado | Alinhamento |",
+      "  |--------------------|--------|--------------------- |-------------|",
+      "  | $2                 | $3     | $4                   | $5          |",
+      "",
+      "Arquivos chave atuais:",
+      "",
+      "bclaude/$6",
+      "bdocs/$7",
+      "",
+      "</tarefa>"
+    ],
+    "description": "Apenas seção de tarefa"
+  },
+  "llm_table": {
+    "prefix": "llm-table",
+    "body": [
+      "  | Documento Original | Status | Documento Atualizado | Alinhamento |",
+      "  |--------------------|--------|--------------------- |-------------|",
+      "  | $1                 | $2     | $3                   | $4          |"
+    ],
+    "description": "Tabela de status LLM"
+  }
+}

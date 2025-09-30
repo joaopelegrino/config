@@ -1,6 +1,6 @@
 # 📚 Manual Completo do Ambiente de Desenvolvimento
 
-**Última atualização:** 21/09/2025
+**Última atualização:** 21/09/2025 (Copy-Paste Workflow)
 **Sistema:** Windows 11 + WSL2 Ubuntu 24.04.3 LTS + VSCode + Warp Terminal + Zsh
 **Usuário:** notebook  
 **Diretório Base:** `/home/notebook/workspace`  
@@ -71,7 +71,7 @@ reload      # Recarregar configurações do shell
 - **Git integration** completa com vim-fugitive
 - **FZF** para busca fuzzy ultrarrápida
 - **MuComplete** com chains por linguagem
-- **Clipboard WSL-Windows** totalmente funcional com fallback
+- **🆕 Clipboard WSL-Windows** totalmente funcional com win32yank + copy-paste workflow
 - **Quickfix Navigation** para workflow profissional
 - **GCC Integration** nativo para desenvolvimento C
 
@@ -85,6 +85,25 @@ Ctrl+F          " Busca texto com ripgrep
 ,h              " Histórico de arquivos
 ,:              " Histórico de comandos
 ,/              " Histórico de buscas
+```
+
+#### 📋 **Copy-Paste entre Abas** (Terminal ↔ Arquivo)
+```vim
+" 🆕 WORKFLOW COPY-PASTE OTIMIZADO
+,y              " Copiar seleção para clipboard Windows
+,p              " Colar do clipboard Windows
+,ya             " Copiar arquivo inteiro
+,yy             " Copiar linha atual com feedback
+,yw             " Copiar palavra sob cursor
+,c              " Copiar seleção visual com feedback
+,cb             " Verificar conteúdo do clipboard
+
+" Navegação entre abas com terminal
+:tabedit file.c     " Abrir arquivo em nova aba
+:tabnew|term        " Terminal em nova aba
+gt / gT             " Próxima/anterior aba
+:tabn 2             " Ir para aba específica
+,tc                 " Fechar aba atual
 ```
 
 #### 💾 Comandos Rápidos (Leader = vírgula)
@@ -215,6 +234,54 @@ zR    " Reabrir todas as dobras (volta ao padrão)
 ├── vim-diagnostic.sh     # Script de diagnóstico
 └── sync-vim-config.sh    # Script de sincronização
 ```
+
+### 🔧 **Configuração Técnica do Clipboard WSL2** (NOVO)
+
+#### Sistema win32yank Otimizado
+```vim
+" Configuração automática para WSL2 (vimrc:313-327)
+if has('wsl')
+    let g:clipboard = {
+        \ 'name': 'WslClipboard',
+        \ 'copy': {
+        \    '+': 'win32yank.exe -i --crlf',
+        \    '*': 'win32yank.exe -i --crlf',
+        \  },
+        \ 'paste': {
+        \    '+': 'win32yank.exe -o --lf',
+        \    '*': 'win32yank.exe -o --lf',
+        \ },
+        \ 'cache_enabled': 0,
+        \ }
+endif
+```
+
+#### Mapeamentos Inteligentes de Clipboard
+```vim
+" Copy com feedback visual (vimrc:329-356)
+nnoremap <leader>y "+y          " Copiar no modo normal
+vnoremap <leader>y "+y          " Copiar seleção visual
+nnoremap <leader>yy "+yy:echo "Line copied to Windows clipboard"<CR>
+nnoremap <leader>ya :%+y<CR>:echo "Arquivo copiado para Windows clipboard!"<CR>
+vnoremap <leader>c "+y:echo "Selection copied to Windows clipboard"<CR>
+
+" Paste otimizado
+nnoremap <leader>p "+p          " Colar do Windows
+nnoremap <leader>pf "+p=`]      " Colar e formatar código
+```
+
+#### Verificação e Diagnóstico
+```vim
+" Comandos de diagnóstico disponíveis
+:echo has('clipboard')          " Deve retornar 1
+:echo &clipboard               " Configuração ativa
+,cb                           " Ver conteúdo atual do clipboard
+```
+
+**Requisitos do Sistema:**
+- ✅ win32yank.exe instalado em `/usr/local/bin/win32yank.exe`
+- ✅ WSL2 com integração Windows
+- ✅ Vim compilado com suporte a clipboard (+clipboard)
 
 ---
 
@@ -944,7 +1011,28 @@ Baseado na pesquisa do contexto externo:
 
 ## 🚀 Workflows de Produtividade
 
-### Workflow 1: Desenvolvimento de Projeto
+### Workflow 1: Copy-Paste entre Terminal e Arquivo (NOVO)
+
+```bash
+# Cenário: Copiar código C e testar no terminal
+vim programa.c              # Aba 1: editar código
+
+# No Vim - copiar função completa
+V                           # Modo visual (selecionar linhas)
+,y                          # Copiar para clipboard Windows
+# Output: "Selection copied to Windows clipboard"
+
+:tabnew                     # Nova aba
+:terminal                   # Terminal na nova aba
+,p                          # Colar código no terminal
+
+# Ou usar navegação rápida:
+gt                          # Alternar entre abas
+,yy                         # Copiar linha específica
+,yw                         # Copiar só uma palavra/variável
+```
+
+### Workflow 2: Desenvolvimento de Projeto
 
 ```bash
 # 1. Abrir workspace no VSCode
@@ -1043,14 +1131,14 @@ docker-compose ps  # Status do compose
 ## 📚 Documentação Adicional
 
 ### Arquivos de Referência
-- `/home/joao/config/vim-README.md` - Documentação completa do Vim
-- `/home/joao/config/vim-quick-guide.md` - Guia rápido do Vim
-- `/home/joao/workspace/ambiente.md` - Configuração do ambiente
-- `/home/joao/workspace/README.md` - Documentação do workspace
+- `/home/notebook/config/vim-diagnostic.sh` - Script de diagnóstico do Vim
+- `/home/notebook/config/vim-terminal-guide.md` - Guia para uso do terminal no Vim
+- `/home/notebook/config/vim-navegacao-tags-analise.md` - Análise de navegação e tags
+- `/home/notebook/config/vimrc` - Configuração principal do Vim (19.5KB)
 
 ### Scripts Úteis
-- `/home/joao/config/vim-diagnostic.sh` - Diagnóstico do Vim
-- `/home/joao/config/sync-to-windows.sh` - Sincronização com Windows
+- `/home/notebook/config/vim-diagnostic.sh` - Diagnóstico do Vim
+- `/home/notebook/config/diagnostico-ambiente.sh` - Diagnóstico completo do ambiente
 
 ### Recursos Online
 - [VSCode Docs](https://code.visualstudio.com/docs)
@@ -1277,7 +1365,7 @@ command! Timestamp put =strftime('%Y-%m-%d %H:%M:%S')
 ## 📦 Estrutura Completa do Workspace
 
 ```
-/home/joao/workspace/
+/home/notebook/workspace/
 ├── 📚 learning/              # Projetos de Aprendizado
 │   ├── material_estudo/      # Documentação estruturada
 │   │   ├── DD-MM/           # Trabalho diário (ex: 25-07)
@@ -1292,7 +1380,7 @@ command! Timestamp put =strftime('%Y-%m-%d %H:%M:%S')
 ├── 📋 ambiente.md           # Configuração detalhada do ambiente
 └── 📖 README.md             # Documentação geral
 
-/home/joao/config/
+/home/notebook/config/
 ├── bashrc                   # Config Bash
 ├── gitconfig                # Config Git global
 ├── fzf.zsh                  # Config FZF para Zsh
@@ -1410,7 +1498,7 @@ mkdir -p ~/workspace/.vscode
       "command": "zsh",
       "args": ["-l"],
       "options": {
-        "cwd": "/home/joao/workspace",
+        "cwd": "/home/notebook/workspace",
         "shell": {
           "executable": "/usr/bin/zsh"
         }
@@ -1432,7 +1520,7 @@ mkdir -p ~/workspace/.vscode
       "command": "zsh",
       "args": ["-l"],
       "options": {
-        "cwd": "/home/joao/workspace/learning"
+        "cwd": "/home/notebook/workspace/learning"
       },
       "isBackground": true,
       "presentation": {
@@ -1446,7 +1534,7 @@ mkdir -p ~/workspace/.vscode
       "command": "zsh",
       "args": ["-l"],
       "options": {
-        "cwd": "/home/joao/config"
+        "cwd": "/home/notebook/config"
       },
       "isBackground": true,
       "presentation": {
@@ -1765,7 +1853,7 @@ ln -s /usr/bin/fdfind ~/.local/bin/fd
 
 #### 4. ⬜ **Atualizar Tasks.json VSCode**
 **Status**: ✅ Configurado, mas caminhos incorretos  
-**Ação**: Corrigir paths de `/home/joao/` para `/home/notebook/`  
+**Ação**: Corrigir paths de `/home/notebook/` para `/home/notebook/`  
 **Localização**: `~/workspace/.vscode/tasks.json`
 
 #### 5. ✓ **VSCode Workspace Tasks**

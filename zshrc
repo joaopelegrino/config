@@ -284,34 +284,6 @@ pwdct() {
   echo "📋 Conteúdo copiado para clipboard!"
 }
 
-# Função alternativa para listagem simples sem caracteres especiais
-pwdct_simple() {
-  local current_path
-
-  # Obtém o caminho atual
-  current_path="$(pwd)"
-
-  # Imprime o caminho atual
-  echo "Current directory: $current_path"
-  echo
-
-  # Prepara o conteúdo para clipboard
-  local clipboard_content tree_output
-
-  echo "Directory structure:"
-  # Usa apenas ls com formato simples
-  tree_output=$(ls -laF --group-directories-first 2>/dev/null || ls -laF)
-  echo "$tree_output"
-
-  # Prepara conteúdo completo para clipboard
-  clipboard_content="$current_path"$'\n\n'"$tree_output"
-
-  # Copia para clipboard (funciona no WSL)
-  echo -n "$clipboard_content" | clip.exe 2>/dev/null || echo -n "$clipboard_content" | xclip -selection clipboard 2>/dev/null
-
-  echo
-  echo "Content copied to clipboard!"
-}
 # --- Fim Funções ---
 
 # --- Configuração Variáveis Github ---
@@ -333,31 +305,19 @@ SCRIPT_NAME="estruturaissue.sh" # Nome do script que você forneceu
 
 # --- Aliases ---
 
-# Claude Code
-alias claudecode="npx @anthropic-ai/claude-code"
-
 
 # Shell reload - Recarregar todas as configurações
 alias reload="source ~/.zshenv && source ~/.zshrc && source ~/.p10k.zsh && source ~/.fzf.zsh"
 
-# Vim config reload helper
-alias vimreload="echo 'Execute no Vim: :source ~/.vimrc'"
-
-alias vim-diag="/home/notebook/config/vim-diagnostic.sh"
-
 # Atalhos para projetos e configurações
-alias la='alias | sort'
 alias zed="vim /home/notebook/config/zshrc"
 alias ved="vim /home/notebook/config/vimrc"
 alias wted="vim '/mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'"
-alias claudeinit="vim /home/notebook/workspace/blog/.claude/commands/iniciar-fase.md"
 
-# Copiar arquivo do agente programador para pasta atual
-alias cpagent='() { 
-    local dest_name="${1:-agente-programador-system-prompt.md}"
-    cp /home/notebook/workspace/especialistas/claude-code/agente-programador-system-prompt.md "./$dest_name" && 
-    echo "✅ Arquivo copiado como: $dest_name" 
-}'
+# LLM template aliases
+alias llm-new='~/config/create-llm-template.sh'
+alias llm-main='vim /home/notebook/workspace/blog/.claude/commands/LLM-main.md'
+alias llm-copy='cp /home/notebook/workspace/blog/.claude/commands/LLM-main.md'
 
 # ========================================
 # Yazi File Manager Integration
@@ -372,12 +332,6 @@ function yy() {
     fi
     rm -f -- "$tmp"
 }
-
-# Yazi file manager aliases
-alias y="yazi"        # Abrir Yazi normalmente
-alias b="yazi"        # Alias alternativo
-alias fm="yazi"       # File manager
-# yy já é uma função, não precisa de alias
 
 # opencode
 export PATH=/home/notebook/.opencode/bin:$PATH
@@ -550,9 +504,17 @@ alias ned="vim '/home/notebook/workspace/especialistas/desenvovlimento/notas/not
 alias sessao='script -c "zsh -c \"PROMPT=\\\"$ \\\" exec zsh\"" ~/logs/sessoes/sessao-$(date +%Y%m%d_%H%M%S)-essencial.txt'
 
 
+# ========================================
+# Claude Code Aliases
+# ========================================
 alias claude="/home/notebook/.claude/local/claude"
 
-# Alias para função pwdct alternativa
+# Claude com permissões bypassed (para ambientes sandbox/desenvolvimento)
+alias cs="claude --dangerously-skip-permissions"
+
+# Claude resume - retomar conversas existentes
+alias cr="claude --dangerously-skip-permissions --resume"
+
 alias pwds="pwdct_simple"
 
 # Warp Terminal Configuration - Added seg 15 set 2025 07:18:25 -03
@@ -563,3 +525,10 @@ export WARP_CONFIG_DIR="$HOME/.warp"
 export WASMTIME_HOME="$HOME/.wasmtime"
 
 export PATH="$WASMTIME_HOME/bin:$PATH"
+. "$HOME/.asdf/asdf.sh"
+. "$HOME/.asdf/completions/asdf.bash"
+
+# ========================================
+# ERLANG/OTP COMPILATION OPTIONS
+# ========================================
+export KERL_CONFIGURE_OPTIONS="--without-javac --with-ssl"

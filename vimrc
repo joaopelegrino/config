@@ -143,7 +143,7 @@ nnoremap <leader>gl :Git log --oneline<CR>
 nnoremap <leader>gd :Gvdiffsplit<CR>
 
 " Vsnip Configuration
-let g:vsnip_snippet_dir = expand('~/.vim/vsnip')
+let g:vsnip_snippet_dir = expand('/home/notebook/config/vim/vsnip')
 
 " -----------------------------------------------------------------------------
 " MUCOMPLETE CONFIGURATION (Simplified - no conflicts)
@@ -173,8 +173,18 @@ let g:mucomplete#chains = {
 " MuComplete spell check integration
 let g:mucomplete#spel#good_words = 1
 
-" Simplified Tab handling for MuComplete only
-imap <expr> <Tab> pumvisible() ? '<C-n>' : '<Plug>(MUcompleteFwd)'
+" vsnip key mappings - must come before MuComplete
+imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+
+" vsnip navigation in snippets (using different keys to avoid conflicts)
+imap <expr> <C-l> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-l>'
+smap <expr> <C-l> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-l>'
+imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+
+" Simplified Tab handling for MuComplete (after vsnip)
+imap <expr> <Tab> vsnip#expandable() ? '<Plug>(vsnip-expand)' : (pumvisible() ? '<C-n>' : '<Plug>(MUcompleteFwd)')
 imap <expr> <S-Tab> pumvisible() ? '<C-p>' : '<Plug>(MUcompleteBwd)'
 
 " -----------------------------------------------------------------------------
@@ -242,8 +252,8 @@ set incsearch
 set hls
 let @/ = ""
 
-" Completion
-set completeopt=menuone,longest,noselect
+" Completion - Always show popup menu
+set completeopt=menuone,longest,preview
 set shortmess+=c
 
 " Spell check
@@ -258,36 +268,18 @@ inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
 inoremap <expr> <left> pumvisible() ? '<c-e>' : '<left>'
 
 " -----------------------------------------------------------------------------
-" NATIVE COMPLETION MAPPINGS
+" COMPLETION MAPPINGS
 " -----------------------------------------------------------------------------
-" Enhanced completion mappings based on vim completion system documentation
-
-" File path completion - completes file and directory paths
-inoremap <C-x><C-f> <C-x><C-f>
-
-" Line completion - completes entire lines
-inoremap <C-x><C-l> <C-x><C-l>
-
-" Spell completion - requires :set spell to be active
-inoremap <C-x><C-s> <C-x><C-s>
-
-" Omni completion - intelligent completion for current filetype
-inoremap <C-x><C-o> <C-x><C-o>
-
-" Vim command completion - completes vim commands and functions
-inoremap <C-x><C-v> <C-x><C-v>
-
-" Dictionary completion - requires dictionary to be set
-inoremap <C-x><C-k> <C-x><C-k>
-
-" Thesaurus completion - requires thesaurus to be set
-inoremap <C-x><C-t> <C-x><C-t>
-
-" Completion from included files
-inoremap <C-x><C-i> <C-x><C-i>
-
-" Tag completion - requires tags file
-inoremap <C-x><C-]> <C-x><C-]>
+" Native Vim completion commands (no custom mappings needed):
+" <C-x><C-f> - File path completion
+" <C-x><C-l> - Line completion
+" <C-x><C-s> - Spell completion
+" <C-x><C-o> - Omni completion
+" <C-x><C-v> - Vim command completion
+" <C-x><C-k> - Dictionary completion
+" <C-x><C-t> - Thesaurus completion
+" <C-x><C-i> - Include file completion
+" <C-x><C-]> - Tag completion
 
 " -----------------------------------------------------------------------------
 " LEADER KEY AND GENERAL MAPPINGS
@@ -361,11 +353,19 @@ nnoremap <leader>rv :source ~/.vimrc<CR>:echo "vimrc reloaded!"<CR>
 command! Vimrc tabnew ~/.vimrc
 nnoremap <leader>ev :Vimrc<CR>
 
+" LLM template commands
+command! LLMMain tabnew | 0r /home/notebook/workspace/blog/.claude/commands/LLM-main.md
+command! -nargs=1 LLMNew tabnew <args> | 0r /home/notebook/workspace/blog/.claude/commands/LLM-main.md
+
 " File opening commands - always use tabs
 command! -nargs=1 -complete=file E tabedit <args>
 command! -nargs=1 -complete=file Edit tabedit <args>
 cabbrev e tabedit
 cabbrev edit tabedit
+
+" Path abbreviations for frequent directories (with namespace)
+iabbrev bdocs /home/notebook/workspace/blog/docs
+iabbrev bclaude /home/notebook/workspace/blog/.claude
 
 " Toggle line numbers
 nnoremap <leader>n :set number!<CR>
