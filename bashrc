@@ -70,7 +70,6 @@ alias s='./vendor/bin/sail'
 
 # Definir o editor padrão
 export EDITOR=vim
-. "$HOME/.cargo/env"
 export PATH="/opt/elixir-1.15.7/bin:$PATH"
 export ELIXIR_ERL_OPTIONS="+fnu"
 export PATH="$HOME/.local/bin:$HOME/.fzf/bin:$PATH"
@@ -216,3 +215,10 @@ echo ""
 . "$HOME/.asdf/completions/asdf.bash"
 . "$HOME/.asdf/asdf.sh"
 . "$HOME/.asdf/completions/asdf.bash"
+
+# Emscripten SDK
+source ~/emsdk/emsdk_env.sh > /dev/null 2>&1
+
+# WASI SDK
+export WASI_SDK_PATH=/opt/wasi-sdk
+export PATH="$WASI_SDK_PATH/bin:$PATH"

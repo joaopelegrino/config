@@ -42,11 +42,18 @@ Plug 'mattn/emmet-vim'
 Plug 'ekalinin/dockerfile.vim'
 Plug 'leafgarland/typescript-vim'
 
+" TSIN - Tag-based Synthetic Information Nodes
+Plug 'joaopelegrino/tsin'
+
 call plug#end()
 
 " -----------------------------------------------------------------------------
 " PLUGIN CONFIGURATIONS
 " -----------------------------------------------------------------------------
+
+" TSIN - Sistema de Expansão de Parágrafos Sintéticos
+" Habilitar auto-validação ao salvar (mostra aviso se tags sem expansões)
+let g:tsin_auto_validate = 1
 
 " FZF Configuration
 nnoremap <C-p> :Files<CR>
@@ -148,30 +155,37 @@ let g:vsnip_snippet_dir = expand('/home/notebook/config/vim/vsnip')
 " -----------------------------------------------------------------------------
 " MUCOMPLETE CONFIGURATION (Simplified - no conflicts)
 " -----------------------------------------------------------------------------
-" Enable MuComplete at startup
-let g:mucomplete#enable_auto_at_startup = 1
+" Enable MuComplete at startup (DISABLED - use Ctrl+Space for manual completion)
+let g:mucomplete#enable_auto_at_startup = 0
 
-" Minimum characters before triggering completion
-let g:mucomplete#minimum_prefix_length = 2
+" Minimum characters before triggering completion (increased to reduce false triggers)
+let g:mucomplete#minimum_prefix_length = 3
+
+" Delay before triggering auto-completion (milliseconds) - increased for smoother typing
+let g:mucomplete#completion_delay = 300
 
 " Completion chains per filetype - defines order and methods
+" Note: 'uspl' (spell) removed to prevent unwanted capitalization suggestions
 let g:mucomplete#chains = {
-    \ 'default': ['omni', 'c-n', 'dict', 'uspl'],
+    \ 'default': ['omni', 'c-n', 'dict'],
     \ 'vim': ['cmd', 'c-n'],
     \ 'html': ['omni', 'c-n'],
-    \ 'css': ['omni', 'c-n'], 
+    \ 'css': ['omni', 'c-n'],
     \ 'javascript': ['omni', 'c-n', 'dict'],
     \ 'typescript': ['omni', 'c-n', 'dict'],
     \ 'python': ['omni', 'c-n', 'dict'],
     \ 'c': ['omni', 'c-n'],
     \ 'cpp': ['omni', 'c-n'],
-    \ 'markdown': [],
+    \ 'markdown': ['c-n', 'dict'],
     \ 'text': ['c-n', 'dict'],
     \ 'dockerfile': ['c-n', 'dict']
     \ }
 
 " MuComplete spell check integration
 let g:mucomplete#spel#good_words = 1
+
+" Disable MuComplete's default mappings to avoid conflicts
+let g:mucomplete#no_mappings = 1
 
 " vsnip key mappings - must come before MuComplete
 imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -186,6 +200,14 @@ smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 " Simplified Tab handling for MuComplete (after vsnip)
 imap <expr> <Tab> vsnip#expandable() ? '<Plug>(vsnip-expand)' : (pumvisible() ? '<C-n>' : '<Plug>(MUcompleteFwd)')
 imap <expr> <S-Tab> pumvisible() ? '<C-p>' : '<Plug>(MUcompleteBwd)'
+
+" MuComplete control mappings
+" Space key: close popup without inserting suggestion
+inoremap <expr> <space> pumvisible() ? '<C-e><space>' : '<space>'
+" Ctrl+Space: manually trigger completion when auto-completion is disabled
+inoremap <silent> <C-Space> <C-r>=mucomplete#tab_complete(1)<CR>
+" Toggle auto-completion on/off
+nnoremap <leader>mc :MUcompleteToggle<CR>:echo "MuComplete toggled!"<CR>
 
 " -----------------------------------------------------------------------------
 " CORE VIM SETTINGS
@@ -253,18 +275,20 @@ set hls
 let @/ = ""
 
 " Completion - Always show popup menu
-set completeopt=menuone,longest,preview
+set completeopt=menuone,longest,noselect
 set shortmess+=c
 
-" Spell check
-set spelllang=en
+" Spell check - Portuguese BR priority with English fallback
+set spelllang=pt_br,en
 set nospell
 
 " Insert completion navigation
 inoremap <expr> <up> pumvisible() ? '<c-p>' : '<up>'
 inoremap <expr> <down> pumvisible() ? '<c-n>' : '<down>'
-inoremap <expr> <right> pumvisible() ? '<c-y>' : '<right>'
-inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
+" Safe Right arrow - closes popup and moves cursor (no auto-accept)
+inoremap <expr> <right> pumvisible() ? '<c-e><right>' : '<right>'
+" Safe Enter - closes popup without accepting, requires explicit Ctrl+Y to accept
+inoremap <expr> <cr> pumvisible() ? '<c-e><cr>' : '<cr>'
 inoremap <expr> <left> pumvisible() ? '<c-e>' : '<left>'
 
 " -----------------------------------------------------------------------------
@@ -296,8 +320,11 @@ nnoremap <leader>x :wq<CR>
 " Clear search highlighting
 nnoremap <leader><space> :noh<CR>
 
-" Toggle spell check
-nnoremap <leader>s :set spell!<CR>
+" Toggle spell check (changed from <leader>s to avoid conflict with synthetic-para plugin)
+nnoremap <leader>sp :set spell!<CR>
+
+" Toggle spell check specifically for markdown files (quick access)
+nnoremap <leader>sm :set spell!<CR>
 
 " -----------------------------------------------------------------------------
 " OPTIMIZED CLIPBOARD FOR WSL2
@@ -382,6 +409,29 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+" Window and Split Management (Creation, Resizing, Movement)
+" Create vertical/horizontal splits
+nnoremap <leader>vs :vsplit<CR>
+nnoremap <leader>sp :split<CR>
+
+" Resize splits using leader + arrow keys
+nnoremap <leader><up> :res +2<CR>
+nnoremap <leader><down> :res -2<CR>
+nnoremap <leader><left> :vertical resize-2<CR>
+nnoremap <leader><right> :vertical resize+2<CR>
+
+" Equalize split sizes
+nnoremap <leader>= <C-w>=
+
+" Close all other splits
+nnoremap <leader>o :only<CR>
+
+" Move splits
+nnoremap <leader>K <C-w>K
+nnoremap <leader>J <C-w>J
+nnoremap <leader>H <C-w>H
+nnoremap <leader>L <C-w>L
 
 " Tab navigation
 nnoremap <leader>tn :tabnew<CR>

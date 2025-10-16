@@ -1,6 +1,9 @@
 # ~/.zshrc
 # LIDO APENAS PARA SHELLS ZSH INTERATIVOS
 
+# Suprimir warnings de completion de pacotes não instalados (ex: Docker)
+ZSH_DISABLE_COMPFIX=true
+
 # --- SSH Agent Persistente ---
 SSH_ENV="$HOME/.ssh/agent-environment"
 
@@ -66,7 +69,12 @@ source $ZSH/oh-my-zsh.sh
 
 
 # alias cnvim='p ~/.config/nvim/' # REMOVIDO
-alias vimv='vim -u NONE -U NONE --noplugin'
+
+# === Vim Initialization Modes ===
+alias i='vim -c "source ~/.vimrc"'                                           # Vim normal (padrão completo)
+alias it='vim -c "source ~/.vimrc" -c "only" -c "terminal ++curwin"'         # Vim direto no terminal mode
+alias iv='vim -u NONE -U NONE --noplugin'                                    # Vim vanilla (sem config/plugins)
+
 alias c='clear'
 alias la='ls -A' # Mostra ocultos exceto . e ..
 alias ll='ls -alF' # Detalhado, ocultos, indicador de tipo
@@ -532,3 +540,109 @@ export PATH="$WASMTIME_HOME/bin:$PATH"
 # ERLANG/OTP COMPILATION OPTIONS
 # ========================================
 export KERL_CONFIGURE_OPTIONS="--without-javac --with-ssl"
+
+# ========================================
+# ELIXIR/OTP ENVIRONMENT (Healthcare Stack)
+# ========================================
+# Unicode support para filenames (ex: café.ex)
+export ELIXIR_ERL_OPTIONS="+fnu"
+
+# Habilita histórico persistente no IEx
+export ERL_AFLAGS="-kernel shell_history enabled"
+
+# Define ambiente padrão do Mix (dev/test/prod)
+export MIX_ENV=dev
+
+# Aumenta limite de file descriptors para Phoenix/LiveView
+# WSL2 já tem limite alto (1M), mas garantimos o mínimo recomendado
+ulimit -n 65536 2>/dev/null || true
+
+# ========================================
+# C-ELIXIR-WASM STACK CONFIGURATION
+# ========================================
+# Emscripten (C/C++ → WASM compiler)
+export EMSDK_QUIET=1  # Suprimir mensagens automáticas
+source ~/emsdk/emsdk_env.sh
+
+# WASI SDK (C → WASI compiler)
+export WASI_SDK_PATH=/opt/wasi-sdk
+export PATH="$WASI_SDK_PATH/bin:$PATH"
+
+# Alias para validação da stack C-Elixir-WASM
+alias check-wasm='cd ~/workspace/ambiente-iniciar && bash scripts/validate_stack_c_elixir_wasm.sh'
+alias validate-stack='check-wasm'  # Alias alternativo
+
+# ========================================
+# Gemini CLI Configuration
+# ========================================
+
+# Alias básico - sempre usa a versão mais recente disponível no npm
+alias gemini='npx @google/gemini-cli@latest'
+
+# Alias para versão específica (stable)
+alias gemini-stable='npx @google/gemini-cli@0.8.1'
+
+# Alias para versão preview (mais recente com recursos experimentais)
+alias gemini-preview='npx @google/gemini-cli@0.9.0-preview.0'
+
+# Alias para versão nightly (bleeding edge - pode ser instável)
+alias gemini-nightly='npx @google/gemini-cli@nightly'
+
+# Função avançada: gerencia versões e exibe informações
+gemini-info() {
+  echo "📦 Informações do Gemini CLI"
+  echo "════════════════════════════════════"
+  echo
+  echo "📌 Versão instalada globalmente:"
+  npm list -g @google/gemini-cli 2>/dev/null | grep @google/gemini-cli || echo "  Nenhuma versão global instalada"
+  echo
+  echo "🌐 Última versão estável disponível:"
+  npm view @google/gemini-cli version 2>/dev/null || echo "  Erro ao consultar npm"
+  echo
+  echo "🔮 Última versão preview disponível:"
+  npm view @google/gemini-cli@preview version 2>/dev/null || echo "  Nenhuma preview disponível"
+  echo
+  echo "🚀 Aliases disponíveis:"
+  echo "  gemini          → npx @google/gemini-cli@latest (sempre atualizado)"
+  echo "  gemini-stable   → npx @google/gemini-cli@0.8.1"
+  echo "  gemini-preview  → npx @google/gemini-cli@0.9.0-preview.0"
+  echo "  gemini-nightly  → npx @google/gemini-cli@nightly"
+  echo
+  echo "💡 Comandos úteis:"
+  echo "  gemini-update   → Atualiza instalação global"
+  echo "  gemini-clean    → Remove cache e reinstala"
+}
+
+# Função para atualizar instalação global (se existir)
+gemini-update() {
+  echo "🔄 Atualizando Gemini CLI..."
+  if npm list -g @google/gemini-cli &>/dev/null; then
+    npm update -g @google/gemini-cli
+    echo "✅ Atualização concluída!"
+  else
+    echo "ℹ️  Nenhuma instalação global encontrada."
+    echo "💡 Use 'npm install -g @google/gemini-cli@latest' para instalar globalmente"
+  fi
+}
+
+# Função para limpar cache e reinstalar
+gemini-clean() {
+  echo "🧹 Limpando instalação do Gemini CLI..."
+  npm uninstall -g @google/gemini-cli 2>/dev/null
+  npm cache clean --force
+  echo "📦 Reinstalando versão mais recente..."
+  npm install -g @google/gemini-cli@latest
+  echo "✅ Limpeza e reinstalação concluídas!"
+}
+
+# Função para comparar versões disponíveis
+gemini-versions() {
+  echo "📋 Versões disponíveis do Gemini CLI"
+  echo "════════════════════════════════════"
+  echo
+  echo "🏷️  Versões estáveis recentes:"
+  npm view @google/gemini-cli versions --json | grep -v nightly | tail -10
+  echo
+  echo "🔮 Versões preview recentes:"
+  npm view @google/gemini-cli versions --json | grep preview | tail -5
+}

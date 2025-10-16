@@ -16,4 +16,4 @@ if grep -q "microsoft" /proc/version 2>/dev/null; then
     export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
 fi
 # Carregar Cargo (Rust) se disponível
-[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+[[ -f "$HOME/.cargo/env" ]] && 
