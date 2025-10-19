@@ -1,0 +1,26 @@
+# chezmoi configuration file
+# https://www.chezmoi.io/reference/configuration-file/
+
+[data]
+    # User information (will prompt on first run)
+    name = "{{ promptStringOnce . "name" "Seu nome completo" }}"
+    email = "{{ promptStringOnce . "email" "Seu email" }}"
+    github_username = "{{ promptStringOnce . "github_username" "GitHub username" "joaopelegrino" }}"
+
+    # Project/Company
+    company = "Individual Developer"
+
+    # System detection (automatic)
+    os = "{{ .chezmoi.os }}"
+    arch = "{{ .chezmoi.arch }}"
+    hostname = "{{ .chezmoi.hostname }}"
+
+    # WSL2 detection
+    is_wsl = {{ if (env "WSL_DISTRO_NAME") }}true{{ else }}false{{ end }}
+
+[edit]
+    command = "vim"
+    args = []
+
+[diff]
+    pager = "bat"

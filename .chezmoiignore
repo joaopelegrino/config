@@ -1,0 +1,41 @@
+# Arquivos a ignorar ao aplicar dotfiles
+
+# Arquivos temporários e backups
+*.backup.*
+*.bak
+*.swp
+*.tmp
+xaa
+
+# Documentação (não aplicar no home)
+README.md
+README-*.md
+*.md
+!.chezmoi.toml.tmpl
+
+# Scripts auxiliares (não aplicar no home)
+create-llm-template.sh
+diagnostico-ambiente.sh
+sync-vim-config.sh
+vim-diagnostic.sh
+
+# Arquivos de teste
+teste*
+fix_warp_wsl.sh
+
+# Configurações do VS Code (gerenciar separadamente)
+vscode-*.json
+
+# Windows Terminal (gerenciar separadamente)
+windows-terminal-settings.json
+
+# Backups do vim
+vim-backup-*
+
+# Arquivos vazios
+term
+terminal
+
+# Git metadata
+.git
+.gitignore

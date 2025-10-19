@@ -1,0 +1,36 @@
+# ~/.config/mise/config.toml (gerenciado por chezmoi)
+# Modern CLI tools configuration
+
+[tools]
+# Modern CLI replacements (from Rio's setup)
+"cargo:bat" = "latest"           # cat replacement with syntax highlighting
+"cargo:lsd" = "latest"            # ls replacement with icons
+"cargo:ripgrep" = "latest"        # grep replacement (faster)
+"cargo:fd-find" = "latest"        # find replacement
+"cargo:bottom" = "latest"         # top/htop replacement
+"cargo:du-dust" = "latest"        # du replacement
+"cargo:git-delta" = "latest"      # better git diff
+"cargo:zoxide" = "latest"         # smarter cd
+
+# Prompt
+starship = "latest"
+
+{{- if eq .company "Individual Developer" }}
+# Development tools
+"cargo:cargo-watch" = "latest"    # auto-rebuild on file changes
+{{- end }}
+
+# Optional: Node.js (if needed)
+# node = "lts"
+
+# Optional: Python (if needed)
+# python = "3.12"
+
+[env]
+EDITOR = "{{ .editor | default "vim" }}"
+BAT_THEME = "Catppuccin Mocha"
+MISE_YES = "true"  # Auto-confirm installs
+
+[settings]
+yes = true  # Don't prompt for confirmations
+verbose = false

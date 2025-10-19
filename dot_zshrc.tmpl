@@ -646,3 +646,56 @@ gemini-versions() {
   echo "🔮 Versões preview recentes:"
   npm view @google/gemini-cli versions --json | grep preview | tail -5
 }
+
+# ==============================================================================
+# MISE (Version Manager) - Gerenciado por chezmoi
+# ==============================================================================
+if [ -f "$HOME/.local/bin/mise" ]; then
+    eval "$(~/.local/bin/mise activate zsh)"
+fi
+
+# ==============================================================================
+# STARSHIP (Prompt) - Gerenciado por chezmoi
+# ==============================================================================
+# Comentar P10K se quiser usar Starship
+# if command -v starship &> /dev/null; then
+#     eval "$(starship init zsh)"
+# fi
+
+# ==============================================================================
+# MODERN CLI ALIASES (gerenciado por mise via chezmoi)
+# ==============================================================================
+# Estes aliases só funcionam se as ferramentas forem instaladas via mise
+if command -v bat &> /dev/null; then
+    alias cat='bat --paging=never'
+    alias catp='bat'
+fi
+
+if command -v lsd &> /dev/null; then
+    alias ls='lsd'
+    alias ll='lsd -l'
+    alias la='lsd -la'
+    alias lt='lsd --tree'
+fi
+
+if command -v rg &> /dev/null; then
+    alias grep='rg'
+fi
+
+if command -v fd &> /dev/null; then
+    alias find='fd'
+fi
+
+if command -v btm &> /dev/null; then
+    alias top='btm'
+fi
+
+if command -v dust &> /dev/null; then
+    alias du='dust'
+fi
+
+# Zoxide (smarter cd) - se instalado via mise
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init zsh)"
+    alias cd='z'
+fi

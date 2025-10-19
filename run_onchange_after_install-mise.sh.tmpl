@@ -1,0 +1,24 @@
+#!/bin/bash
+# Hash: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
+#
+# HASHING TRICK (Rio's pattern, copiado do Helm):
+# - Este comentário com hash muda SEMPRE que mise config muda
+# - chezmoi detecta mudança e re-executa este script
+# - mise reinstala tools atualizados automaticamente!
+#
+# Sem intervenção manual necessária! 🎉
+
+echo "🔄 chezmoi detected mise config change, reinstalling tools..."
+
+if command -v mise &> /dev/null; then
+    # Install new/updated tools
+    ~/.local/bin/mise install
+
+    # Prune unused versions (cleanup)
+    ~/.local/bin/mise prune --yes
+
+    echo "✅ mise tools updated!"
+else
+    echo "⚠️  mise not found, skipping tool installation"
+    echo "   Run: curl https://mise.run | sh"
+fi
