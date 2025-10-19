@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source:*)",
+      "Bash(source ~/.p10k.zsh)",
+      "Bash(source ~/.fzf.zsh)",
+      "Bash(vim:*)",
+      "Bash(yazi:*)",
+      "Bash(cargo:*)",
+      "WebSearch",
+      "Bash(./vim-diagnostic.sh)",
+      "Read(//mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/**)",
+      "Bash(python3:*)",
+      "Bash(wsl:*)",
+      "Bash(alias wted)",
+      "Bash(grep:*)",
+      "Bash(env)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "/tmp",
+      "/home/notebook"
+    ]
+  },
+  "outputStyle": "Explanatory"
+}
