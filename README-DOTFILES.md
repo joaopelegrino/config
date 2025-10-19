@@ -58,24 +58,43 @@ chezmoi apply
 ## 📁 Estrutura
 
 ```
-~/.local/share/chezmoi/
-├── .chezmoi.toml.tmpl              # Config do chezmoi
-├── .chezmoiignore                  # Arquivos a não aplicar
+~/.local/share/chezmoi/                     # Source (templates)
+├── .chezmoi.toml.tmpl                      # Config do chezmoi
+├── .chezmoiignore                          # Arquivos a não aplicar
 │
-├── dot_zshrc.tmpl                  # ~/.zshrc (template)
-├── dot_bashrc.tmpl                 # ~/.bashrc (template)
-├── dot_vimrc                       # ~/.vimrc
-├── dot_gitconfig.tmpl              # ~/.gitconfig
-├── dot_zshenv                      # ~/.zshenv
+├── dot_zshrc.tmpl                          # → ~/.zshrc
+├── dot_bashrc.tmpl                         # → ~/.bashrc
+├── dot_vimrc                               # → ~/.vimrc
+├── dot_gitconfig.tmpl                      # → ~/.gitconfig
+├── dot_zshenv                              # → ~/.zshenv
+├── dot_fzf.bash                            # → ~/.fzf.bash
+├── dot_fzf.zsh                             # → ~/.fzf.zsh
+├── dot_p10k.zsh                            # → ~/.p10k.zsh
+├── dot_profile                             # → ~/.profile
 │
-├── dot_config/
+├── dot_config/                             # → ~/.config/
 │   ├── mise/
-│   │   └── config.toml.tmpl        # Ferramentas do mise
-│   └── starship.toml.tmpl          # Config do starship
+│   │   └── config.toml.tmpl                # → ~/.config/mise/config.toml
+│   └── starship.toml.tmpl                  # → ~/.config/starship.toml
 │
-├── run_once_before_install-tools.sh       # Instala base (1x)
-└── run_onchange_after_install-mise.sh.tmpl # Auto-reinstall (magic!)
+├── dot_vim/                                # → ~/.vim/
+│   ├── autoload/
+│   │   └── plug.vim                        # Vim-plug (plugin manager)
+│   ├── plugged/                            # Plugins instalados (ignorado)
+│   ├── spell/                              # Dicionários de spell checking
+│   ├── undodir/                            # Histórico de undo (ignorado)
+│   └── vsnip/                              # Snippets do vim-vsnip
+│
+├── dot_claude/                             # → ~/.claude/
+│   ├── commands/                           # Slash commands customizados
+│   └── settings.local.json                 # Permissões e preferências
+│
+├── run_once_before_install-tools.sh        # Instala base (1x apenas)
+└── run_onchange_after_install-mise.sh.tmpl # Auto-reinstall (hashing trick!)
 ```
+
+**Arquivos gerenciados:** 28 arquivos/diretórios aplicados automaticamente
+**Documentação:** 3 guias completos (DIAGNOSTICO, VALIDACAO, ESTRUTURA)
 
 ## 🎩 Hashing Trick (Auto-Reinstall)
 

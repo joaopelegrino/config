@@ -141,6 +141,57 @@ Quando você edita `~/.config/mise/config.toml` via chezmoi:
 4. mise reinstala/atualiza ferramentas
 5. ✨ **Zero intervenção manual!**
 
+## 🎨 Vim - Plugins e Configuração
+
+O Vim está configurado com 14 plugins via vim-plug:
+
+### Plugins Instalados
+
+```bash
+# Verificar status dos plugins
+vim +PlugStatus +q
+
+# Instalar novos plugins (após adicionar no .vimrc)
+vim +PlugInstall +qall
+
+# Atualizar plugins
+vim +PlugUpdate +qall
+
+# Limpar plugins removidos
+vim +PlugClean +qall
+```
+
+### Plugins Ativos
+
+- **fzf + fzf.vim** - Fuzzy finder dentro do Vim
+- **lightline.vim** - Statusline melhorada
+- **vim-lsp** + **vim-lsp-settings** - Language Server Protocol
+- **vim-fugitive** - Integração Git
+- **nerdcommenter** - Comentários rápidos
+- **vim-surround** - Manipulação de delimitadores
+- **vim-vsnip** - Snippets
+- **vim-mucomplete** - Autocompletion
+- **emmet-vim** - HTML/CSS rápido
+- **dockerfile.vim** - Syntax Dockerfile
+- **typescript-vim** - Syntax TypeScript
+- **tsin** - Plugin customizado
+
+### Adicionar Novo Plugin
+
+```bash
+# 1. Editar vimrc
+chezmoi edit ~/.vimrc
+
+# 2. Adicionar linha entre plug#begin e plug#end:
+Plug 'autor/nome-do-plugin'
+
+# 3. Aplicar
+chezmoi apply
+
+# 4. Instalar plugin
+vim +PlugInstall +qall
+```
+
 ## 🔧 Aliases Automáticos
 
 Quando as ferramentas estiverem instaladas, estes aliases estarão disponíveis:
@@ -163,6 +214,45 @@ Para usar os comandos originais, use:
 /bin/ls            # comando original
 ```
 
+## 🤖 Claude Code - Configuração
+
+O Claude Code está configurado via `~/.claude/`:
+
+### Permissões Configuradas
+
+```bash
+# Ver configuração atual
+cat ~/.claude/settings.local.json
+
+# Editar permissões
+chezmoi edit ~/.claude/settings.local.json
+
+# Aplicar mudanças
+chezmoi apply
+```
+
+### Permissões Ativas
+
+- ✅ **Bash** - Comandos source, vim, yazi, cargo, python3
+- ✅ **WebSearch** - Busca na web habilitada
+- ✅ **Read** - Acesso a arquivos Windows Terminal
+- ✅ **Diretórios adicionais** - /tmp, /home/notebook
+
+### Adicionar Slash Command
+
+```bash
+# 1. Criar comando
+chezmoi edit ~/.claude/commands/meu-comando.md
+
+# 2. Adicionar conteúdo do comando
+
+# 3. Aplicar
+chezmoi apply
+
+# 4. Usar
+/meu-comando
+```
+
 ## 📊 Verificar Status
 
 ```bash
@@ -177,6 +267,9 @@ rg --version
 # Verificar se aliases estão ativos
 type cat    # deve mostrar: cat is an alias for bat
 type ls     # deve mostrar: ls is an alias for lsd
+
+# Verificar vim plugins
+vim +PlugStatus +q
 ```
 
 ## 🐛 Troubleshooting
