@@ -207,6 +207,39 @@ Baseado no setup de Rio (DevPod + chezmoi + mise):
 
 ---
 
+## 🔧 Correções Aplicadas (2025-10-19)
+
+### Problema Crítico do Vim - RESOLVIDO ✅
+
+**Sintoma:** Vim não carregava plugins (E117: Função desconhecida: plug#begin)
+
+**Causa:** Diretório `vim/` sem prefixo `dot_` → aplicado como `~/vim/` em vez de `~/.vim/`
+
+**Solução:**
+- Renomeado `vim/` → `dot_vim/`
+- 14 plugins reinstalados via :PlugInstall
+- Estrutura completa restaurada
+
+**Resultado:** ✅ Vim 100% funcional novamente!
+
+### Duplicações Removidas ✅
+
+- Removidos 5 arquivos duplicados (fzf.bash, fzf.zsh, p10k.zsh, profile, vimrc.backup)
+- Home directory limpo (sem arquivos sem ponto inicial)
+- Repo organizado (-9 arquivos desnecessários)
+
+### Claude Code Integrado ✅
+
+- Adicionado `dot_claude/` com configurações
+- Sem secrets (apenas permissões)
+
+**Documentação completa:**
+- `DIAGNOSTICO-COMPLETO.md` - Análise detalhada
+- `VALIDACAO-CORRECOES.md` - Checklist completo
+- `ESTRUTURA-DIRETORIOS.md` - Como funciona o espelhamento
+
+---
+
 **Autor:** João Pelegrino ([@joaopelegrino](https://github.com/joaopelegrino))
-**Versão:** 1.0
+**Versão:** 2.0
 **Última atualização:** 2025-10-19

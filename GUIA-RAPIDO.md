@@ -286,3 +286,47 @@ Estes arquivos são carregados automaticamente mas não gerenciados pelo chezmoi
 **Dica:** Use `chezmoi diff` antes de aplicar mudanças para ver exatamente o que vai mudar!
 
 **Lembre-se:** Toda vez que você edita configs via `chezmoi edit`, faça `chezmoi apply` depois!
+
+---
+
+## 🔧 Correções Aplicadas Recentemente
+
+### ✅ Vim Corrigido (2025-10-19)
+
+**Problema:** Plugins não carregavam (E117: Função desconhecida: plug#begin)
+
+**Solução Aplicada:**
+```bash
+# Diretório vim foi renomeado para dot_vim
+~/.vim/autoload/plug.vim  ✅ AGORA EXISTE
+~/.vim/plugged/           ✅ 14 PLUGINS INSTALADOS
+```
+
+**Como verificar:**
+```bash
+vim +PlugStatus +q  # Ver status dos plugins
+ls -la ~/.vim/      # Ver estrutura completa
+```
+
+### ✅ Duplicações Removidas
+
+**Antes:**
+- `~/fzf.bash`, `~/fzf.zsh`, `~/p10k.zsh` (ERRADO - sem ponto)
+- `~/.fzf.bash`, `~/.fzf.zsh`, `~/.p10k.zsh` (CORRETO - com ponto)
+
+**Depois:**
+- ✅ Apenas versões com ponto existem
+- ✅ Home directory limpo
+
+### 📚 Nova Documentação
+
+- **DIAGNOSTICO-COMPLETO.md** - Análise detalhada dos problemas
+- **VALIDACAO-CORRECOES.md** - Checklist de validação
+- **ESTRUTURA-DIRETORIOS.md** - Como funciona o espelhamento chezmoi
+
+**Ver docs:**
+```bash
+cd ~/.local/share/chezmoi
+cat DIAGNOSTICO-COMPLETO.md
+cat VALIDACAO-CORRECOES.md
+```
