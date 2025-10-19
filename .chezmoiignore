@@ -39,3 +39,7 @@ terminal
 # Git metadata
 .git
 .gitignore
+
+# Vim - Diretórios gerados automaticamente
+dot_vim/plugged
+dot_vim/undodir
