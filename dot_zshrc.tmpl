@@ -50,7 +50,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
     git
     zsh-autosuggestions
-    z # Plugin Z para navegação rápida (requer .z file no home)
+    # z # REMOVIDO - Usando zoxide (Rust) em vez do plugin Z
     zsh-syntax-highlighting
     zsh-autocomplete # Deve vir DEPOIS de zsh-syntax-highlighting
 )
@@ -666,36 +666,66 @@ fi
 # MODERN CLI ALIASES (gerenciado por mise via chezmoi)
 # ==============================================================================
 # Estes aliases só funcionam se as ferramentas forem instaladas via mise
+
+# Bat (cat com syntax highlighting)
 if command -v bat &> /dev/null; then
     alias cat='bat --paging=never'
     alias catp='bat'
 fi
 
-if command -v lsd &> /dev/null; then
+# Eza/Lsd (ls moderno) - Prioriza eza se ambos instalados
+if command -v eza &> /dev/null; then
+    # Eza (sucessor do exa/lsd) - Mais recursos e melhor manutenção
+    alias ls='eza --icons --group-directories-first'
+    alias ll='eza -l --icons --group-directories-first --git'
+    alias la='eza -la --icons --group-directories-first --git'
+    alias lt='eza --tree --icons --level=2'
+    alias lta='eza --tree --icons --level=3'
+    alias laa='eza -la --icons --group-directories-first --git --header --time-style=long-iso'
+elif command -v lsd &> /dev/null; then
+    # Lsd (fallback se eza não estiver instalado)
     alias ls='lsd'
     alias ll='lsd -l'
     alias la='lsd -la'
     alias lt='lsd --tree'
 fi
 
+# Ripgrep (grep ultra-rápido)
 if command -v rg &> /dev/null; then
     alias grep='rg'
 fi
 
+# Fd (find moderno)
 if command -v fd &> /dev/null; then
     alias find='fd'
 fi
 
+# Bottom (monitor de recursos)
 if command -v btm &> /dev/null; then
     alias top='btm'
 fi
 
+# Dust (visualizador de uso de disco)
 if command -v dust &> /dev/null; then
     alias du='dust'
 fi
 
-# Zoxide (smarter cd) - se instalado via mise
+# ==============================================================================
+# ZOXIDE (Smarter CD) - Ferramenta Rust para navegação inteligente
+# ==============================================================================
+# Zoxide substitui o plugin 'z' com melhor performance (10-50x mais rápido)
+# Database: SQLite interno (~/.local/share/zoxide/db.zo)
+# Algoritmo: Frecency avançado (frequency + recency)
 if command -v zoxide &> /dev/null; then
     eval "$(zoxide init zsh)"
-    alias cd='z'
+
+    # Aliases de navegação
+    alias cd='z'        # cd usa zoxide
+    alias cdi='zi'      # cd interativo (com fzf)
+
+    # Utilitários zoxide
+    alias zq='zoxide query'           # Query sem navegar
+    alias zl='zoxide query --list'    # Lista database completo
+    alias zr='zoxide remove'          # Remove entrada do database
+    alias zs='zoxide query --score'   # Mostra scores
 fi
