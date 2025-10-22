@@ -68,6 +68,31 @@ docker-compose -f docker-compose.dev.yml up  # If present in project
 # - Managed via chezmoi: ~/.vscode-server/extensions.txt
 ```
 
+### Windows Terminal Configuration
+```bash
+# Windows Terminal settings (managed by chezmoi)
+chezmoi edit ~/.config/windows-terminal/settings.json  # Edit settings
+chezmoi apply                                           # Apply changes (copies to Windows)
+sync-windows-terminal                                   # Manual sync command
+
+# ⚠️ IMPORTANT: File is COPIED, not symlinked
+# Reason: Windows cannot read symlinks created by WSL (known limitation)
+# After editing, run `chezmoi apply` to sync changes
+
+# Configuration locations:
+# Source (managed):      ~/.config/windows-terminal/settings.json
+# Destination (Windows): C:\Users\valor\AppData\Local\...\settings.json
+
+# Variables configured in ~/.config/chezmoi/chezmoi.toml:
+# - windows_username: "valor"
+# - wsl_profile_guid: "{51855cb2-8cce-5362-8f54-464b92b32386}"
+
+# Workflow:
+# 1. Edit: chezmoi edit ~/.config/windows-terminal/settings.json
+# 2. Apply: chezmoi apply (auto-copies to Windows Terminal)
+# 3. Restart: Close and reopen Windows Terminal to see changes
+```
+
 ## Architecture and Structure
 
 ### Configuration Architecture
@@ -352,10 +377,50 @@ vim -S project.vim
 - **LSP Problems**: Check `:LspStatus` in Vim
 - **Shell Issues**: Run `reload` to refresh configuration
 - **Symlink Problems**: Check diagnostic scripts for broken links
+- **Windows Terminal not loading configs**: Close completely and reopen after `chezmoi apply`
 
 ### Performance Monitoring
 - Shell startup time should be <500ms
 - Vim should load in <2 seconds with all plugins
 - Use diagnostic scripts to identify performance issues
 
-This configuration represents a mature, production-ready development environment optimized for productivity and maintainability.
+---
+
+## Important Learnings & Limitations
+
+### WSL ↔ Windows Symlink Limitations
+
+**Critical Issue:** Windows **cannot** read symlinks created by WSL
+
+**Affected:**
+- Windows Terminal settings
+- Any Windows application reading WSL files
+- Cross-boundary file access
+
+**Solution:** Use **file copying** instead of symlinking when Windows is the consumer
+
+**Implementation:**
+- `run_once_after_setup-windows-terminal.sh.tmpl` - Initial copy
+- `run_onchange_after_sync-windows-terminal.sh.tmpl` - Auto-sync on changes
+- `sync-windows-terminal` - Manual sync function in zshrc
+
+**References:**
+- [Trail of Bits: Why Windows can't follow WSL symlinks](https://blog.trailofbits.com/2024/02/12/why-windows-cant-follow-wsl-symlinks/)
+- [GitHub Issue #12250 (microsoft/WSL)](https://github.com/microsoft/WSL/issues/12250)
+
+### Docker Completion Warning
+
+**Issue:** `compinit:527: no such file or directory: /usr/share/zsh/vendor-completions/_docker`
+
+**Cause:** Docker Desktop mounts completion files at boot time, but Zsh tries to load before mount completes
+
+**Solution:** Already implemented in `dot_zshrc.tmpl:5`
+```bash
+ZSH_DISABLE_COMPFIX=true  # Suppress completion warnings
+```
+
+**Impact:** No functionality loss, just suppresses harmless warnings
+
+---
+
+This configuration represents a mature, production-ready development environment optimized for productivity and maintainability, with documented workarounds for WSL2 edge cases.

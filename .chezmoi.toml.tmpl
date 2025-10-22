@@ -18,6 +18,10 @@
     # WSL2 detection
     is_wsl = {{ if (env "WSL_DISTRO_NAME") }}true{{ else }}false{{ end }}
 
+    # Windows Terminal configuration (WSL2 only)
+    windows_username = "{{ promptStringOnce . "windows_username" "Windows username" "valor" }}"
+    wsl_profile_guid = "{{ promptStringOnce . "wsl_profile_guid" "WSL Profile GUID" "{51855cb2-8cce-5362-8f54-464b92b32386}" }}"
+
 [edit]
     command = "vim"
     args = []

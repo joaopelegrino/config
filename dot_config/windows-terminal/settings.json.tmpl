@@ -1,10 +1,14 @@
+{{- /* Windows Terminal Settings Template */ -}}
+{{- /* Managed by chezmoi - DO NOT EDIT DIRECTLY */ -}}
+{{- /* Edit via: chezmoi edit ~/.config/windows-terminal/settings.json */ -}}
+{{- /* Apply via: chezmoi apply */ -}}
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": 
+    "actions":
     [
         {
-            "command": 
+            "command":
             {
                 "action": "copy",
                 "singleLine": false
@@ -20,7 +24,7 @@
             "id": "User.find"
         },
         {
-            "command": 
+            "command":
             {
                 "action": "splitPane",
                 "split": "auto",
@@ -34,11 +38,11 @@
     "centerOnLaunch": true,
     "copyFormatting": "none",
     "copyOnSelect": true,
-    "defaultProfile": "{51855cb2-8cce-5362-8f54-464b92b32386}",
+    "defaultProfile": "{{ .wsl_profile_guid }}",
     "firstWindowPreference": "defaultProfile",
     "focusFollowMouse": false,
     "initialPosition": ",",
-    "keybindings": 
+    "keybindings":
     [
         {
             "id": "Terminal.ToggleFocusMode",
@@ -82,23 +86,23 @@
         }
     ],
     "launchMode": "default",
-    "newTabMenu": 
+    "newTabMenu":
     [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": 
+    "profiles":
     {
-        "defaults": 
+        "defaults":
         {
             "adjustIndistinguishableColors": "always",
             "closeOnExit": "graceful",
             "elevate": false,
-            "font": 
+            "font":
             {
                 "face": "Cascadia Code",
-                "features": 
+                "features":
                 {
                     "calt": 1,
                     "ss01": 1
@@ -114,7 +118,7 @@
             "startingDirectory": "%USERPROFILE%",
             "useAcrylic": false
         },
-        "list": 
+        "list":
         [
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
@@ -126,27 +130,27 @@
                 "bellStyle": "none",
                 "colorScheme": "Ubuntu",
                 "commandline": "wsl.exe -d Ubuntu-24.04 -- zsh",
-                "font": 
+                "font":
                 {
                     "face": "Hack Nerd Font",
                     "size": 10,
                     "weight": "medium"
                 },
-                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
+                "guid": "{{ .wsl_profile_guid }}",
                 "hidden": false,
-                "name": "Ubuntu WSL",
+                "name": "Ubuntu WSL ({{ .chezmoi.username }})",
                 "opacity": 100,
                 "padding": "8, 2, 8, 2",
                 "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc",
-                "startingDirectory": "//wsl.localhost/Ubuntu-24.04/home/notebook",
+                "startingDirectory": "//wsl.localhost/Ubuntu-24.04/home/{{ .chezmoi.username }}",
                 "suppressApplicationTitle": true,
                 "useAcrylic": true
             },
             {
-                "commandline": "C:\\Programa\u00e7\u00e3o\\Git\\bin\\bash.exe -i -l",
+                "commandline": "C:\\Programação\\Git\\bin\\bash.exe -i -l",
                 "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
                 "hidden": false,
-                "icon": "C:\\Programa\u00e7\u00e3o\\Git\\mingw64\\share\\git\\git-for-windows.ico",
+                "icon": "C:\\Programação\\Git\\mingw64\\share\\git\\git-for-windows.ico",
                 "name": "Git Bash",
                 "source": "Git",
                 "startingDirectory": "%USERPROFILE%"
@@ -155,7 +159,7 @@
                 "bellStyle": "none",
                 "colorScheme": "Dracula",
                 "commandline": "wsl.exe -d archlinux",
-                "font": 
+                "font":
                 {
                     "face": "Hack Nerd Font",
                     "size": 10,
@@ -173,7 +177,7 @@
             }
         ]
     },
-    "schemes": 
+    "schemes":
     [
         {
             "background": "#282A36",

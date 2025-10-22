@@ -218,6 +218,39 @@ chezmoi apply --force
 chezmoi apply --verbose
 ```
 
+### Windows Terminal não carrega configurações
+
+**Sintoma:** Windows Terminal abre com configurações padrão, profiles WSL não aparecem
+
+**Diagnóstico:**
+```bash
+# 1. Verificar se arquivo foi copiado
+ls -lh /mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json
+
+# 2. Validar JSON
+python3 -m json.tool ~/.config/windows-terminal/settings.json
+
+# 3. Testar leitura pelo Windows
+powershell.exe -Command "Get-Content \$env:LOCALAPPDATA\\Packages\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\\settings.json -First 5"
+```
+
+**Solução:**
+```bash
+# 1. Sincronizar manualmente
+sync-windows-terminal
+
+# 2. Ou via chezmoi
+chezmoi apply
+
+# 3. IMPORTANTE: Fechar COMPLETAMENTE o Windows Terminal
+# - Fechar todas as abas
+# - Garantir que processo não está rodando
+
+# 4. Reabrir Windows Terminal
+```
+
+**Nota:** Windows Terminal só aplica mudanças após reinicialização completa.
+
 ## 🦀 Guia Completo: Ferramentas Rust Modernas
 
 ### 🎯 Filosofia
@@ -631,6 +664,44 @@ Baseado no setup de Rio (DevPod + chezmoi + mise):
 
 ---
 
+## 🔧 Atualizações Recentes (2025-10-22)
+
+### Windows Terminal Integrado ao Chezmoi ✅
+
+**Gerenciamento Completo:**
+- ✅ `dot_config/windows-terminal/settings.json.tmpl` - Template com variáveis
+- ✅ `run_once_after_setup-windows-terminal.sh.tmpl` - Setup inicial
+- ✅ `run_onchange_after_sync-windows-terminal.sh.tmpl` - Auto-sync em mudanças
+- ✅ `sync-windows-terminal` - Comando manual de sincronização
+
+**Variáveis Dinâmicas:**
+- `{{ .windows_username }}` - Username do Windows
+- `{{ .wsl_profile_guid }}` - GUID do profile WSL
+- `{{ .chezmoi.username }}` - Username do WSL
+
+**Workflow:**
+```bash
+# 1. Editar configurações
+chezmoi edit ~/.config/windows-terminal/settings.json
+
+# 2. Aplicar mudanças (copia automaticamente)
+chezmoi apply
+
+# 3. Reiniciar Windows Terminal para ver mudanças
+```
+
+**⚠️ Limitação Crítica Descoberta: Symlinks WSL→Windows NÃO funcionam**
+- Windows não consegue ler symlinks criados pelo WSL
+- Solução: Arquivo é **copiado** em vez de symlinked
+- Auto-sync implementado para manter sincronização
+
+**Documentação Completa:**
+- `PROPOSTA-WINDOWS-TERMINAL-CHEZMOI.md` - Proposta original
+- `WINDOWS-TERMINAL-IMPLEMENTACAO-COMPLETA.md` - Implementação inicial
+- `WINDOWS-TERMINAL-CORRECAO-SYMLINK.md` - Correção e aprendizados
+
+---
+
 ## 🎯 Próximos Passos Recomendados
 
 ### 1. Configurar Git Delta (já instalado) 🔧
@@ -914,6 +985,98 @@ alias backup-dots='chezmoi cd && git add . && git commit -m "backup: $(date +%Y-
 
 ---
 
+## 🎓 Aprendizados Importantes
+
+### WSL ↔ Windows: Limitações de Symlinks
+
+**Descoberta Crítica:** Windows **não consegue ler** symlinks criados pelo WSL
+
+**Impacto:**
+- ✅ Symlinks WSL → WSL: Funcionam perfeitamente
+- ✅ Symlinks Windows → WSL: Funcionam (requer Modo Desenvolvedor)
+- ❌ Symlinks WSL → Windows: **NÃO FUNCIONAM**
+
+**Casos Afetados:**
+- Windows Terminal settings.json
+- Qualquer aplicação Windows lendo arquivos WSL
+- Cross-boundary file access
+
+**Solução Implementada:**
+- Usar **cópia** em vez de symlink quando Windows é o consumidor
+- Scripts automáticos de sincronização (`run_onchange_after_*.sh.tmpl`)
+- Comando manual `sync-windows-terminal` para sync rápido
+
+**Referências:**
+- [Trail of Bits: Why Windows can't follow WSL symlinks (Feb 2024)](https://blog.trailofbits.com/2024/02/12/why-windows-cant-follow-wsl-symlinks/)
+- [GitHub Issue #12250 (microsoft/WSL)](https://github.com/microsoft/WSL/issues/12250)
+- [Stack Overflow: WSL symlink from Windows](https://stackoverflow.com/questions/57580420/)
+
+### Docker Completion Warning (Inofensivo)
+
+**Warning:** `compinit:527: no such file or directory: /usr/share/zsh/vendor-completions/_docker`
+
+**Causa:**
+- Docker Desktop monta completions via `/mnt/wsl/docker-desktop/`
+- Zsh tenta carregar antes do mount completar durante boot
+
+**Solução:**
+```bash
+ZSH_DISABLE_COMPFIX=true  # Já configurado em dot_zshrc.tmpl:5
+```
+
+**Impacto:** Nenhum - completions funcionam normalmente após Docker Desktop iniciar
+
+### Chezmoi Hashing Trick
+
+**Técnica Avançada:** Auto-reinstalação de ferramentas quando config muda
+
+**Como funciona:**
+```bash
+# run_onchange_after_install-mise.sh.tmpl
+# Hash: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
+
+# Quando mise config.toml muda:
+# 1. Hash no comentário muda
+# 2. Chezmoi detecta arquivo modificado
+# 3. Script roda automaticamente
+# 4. mise reinstala/atualiza ferramentas
+```
+
+**Vantagem:** Zero intervenção manual para manter ferramentas atualizadas!
+
+### Template Variables Best Practices
+
+**Variáveis de Sistema (Auto-detectadas):**
+```bash
+{{ .chezmoi.os }}           # "linux", "darwin", "windows"
+{{ .chezmoi.arch }}         # "amd64", "arm64"
+{{ .chezmoi.username }}     # Username WSL
+{{ .chezmoi.hostname }}     # Nome da máquina
+```
+
+**Variáveis Customizadas (Prompt ou Default):**
+```toml
+# .chezmoi.toml.tmpl
+[data]
+    windows_username = "{{ promptStringOnce . "windows_username" "Windows username" "valor" }}"
+    wsl_profile_guid = "{{ promptStringOnce . "wsl_profile_guid" "WSL GUID" "{guid}" }}"
+```
+
+**Condicionais por Ambiente:**
+```bash
+{{- if eq .chezmoi.os "linux" }}
+# Linux-specific config
+{{- else if eq .chezmoi.os "darwin" }}
+# macOS-specific config
+{{- end }}
+
+{{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+# WSL2-specific config
+{{- end }}
+```
+
+---
+
 **Autor:** João Pelegrino ([@joaopelegrino](https://github.com/joaopelegrino))
-**Versão:** 3.0
-**Última atualização:** 2025-10-20
+**Versão:** 3.1
+**Última atualização:** 2025-10-22

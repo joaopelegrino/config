@@ -1,0 +1,111 @@
+#!/bin/bash
+# Windows Terminal Setup via Chezmoi
+# This script creates a symlink from chezmoi-managed config to Windows Terminal
+# Runs only once per machine (unless file changes)
+
+{{- if eq .chezmoi.os "linux" }}
+{{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}========================================${NC}"
+echo -e "${BLUE}  Windows Terminal Setup (Chezmoi)${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
+
+# Define paths
+WINDOWS_USER="{{ .windows_username }}"
+WT_PATH="/mnt/c/Users/${WINDOWS_USER}/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState"
+CHEZMOI_WT_CONFIG="{{ .chezmoi.homeDir }}/.config/windows-terminal/settings.json"
+
+# Check if Windows Terminal is installed
+if [ ! -d "$WT_PATH" ]; then
+    echo -e "${YELLOW}⚠️  Windows Terminal not found at:${NC}"
+    echo "   $WT_PATH"
+    echo ""
+    echo -e "${YELLOW}   Skipping setup...${NC}"
+    echo -e "${BLUE}   If Windows Terminal is installed, verify the windows_username in .chezmoi.toml${NC}"
+    exit 0
+fi
+
+echo -e "${GREEN}✓${NC} Windows Terminal detected"
+echo -e "  Location: $WT_PATH"
+echo ""
+
+# Check if chezmoi config exists
+if [ ! -f "$CHEZMOI_WT_CONFIG" ]; then
+    echo -e "${RED}✗${NC} Chezmoi config not found at:"
+    echo "   $CHEZMOI_WT_CONFIG"
+    echo ""
+    echo -e "${RED}   Run 'chezmoi apply' first to generate the config${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✓${NC} Chezmoi config found"
+echo -e "  Source: $CHEZMOI_WT_CONFIG"
+echo ""
+
+# Backup existing settings.json
+if [ -f "$WT_PATH/settings.json" ] && [ ! -L "$WT_PATH/settings.json" ]; then
+    BACKUP_FILE="$WT_PATH/settings.json.backup.$(date +%Y%m%d_%H%M%S)"
+    echo -e "${YELLOW}📦 Creating backup...${NC}"
+    cp "$WT_PATH/settings.json" "$BACKUP_FILE"
+    echo -e "${GREEN}✓${NC} Backup created: $(basename $BACKUP_FILE)"
+    echo ""
+fi
+
+# Remove existing settings.json (including symlinks that don't work)
+if [ -e "$WT_PATH/settings.json" ] || [ -L "$WT_PATH/settings.json" ]; then
+    echo -e "${YELLOW}🗑️  Removing existing settings.json...${NC}"
+    rm -f "$WT_PATH/settings.json"
+fi
+
+# Copy file instead of symlink (Windows can't read WSL symlinks)
+echo -e "${BLUE}📋 Copying settings to Windows Terminal...${NC}"
+cp "$CHEZMOI_WT_CONFIG" "$WT_PATH/settings.json"
+
+# Verify copy
+if [ -f "$WT_PATH/settings.json" ] && [ ! -L "$WT_PATH/settings.json" ]; then
+    FILE_SIZE=$(stat -c%s "$WT_PATH/settings.json")
+    echo -e "${GREEN}✓${NC} Settings copied successfully! (${FILE_SIZE} bytes)"
+    echo ""
+    echo -e "${GREEN}========================================${NC}"
+    echo -e "${GREEN}  Windows Terminal Setup Complete!${NC}"
+    echo -e "${GREEN}========================================${NC}"
+    echo ""
+    echo -e "${BLUE}Configuration Details:${NC}"
+    echo -e "  Source:      ${GREEN}$CHEZMOI_WT_CONFIG${NC}"
+    echo -e "  Destination: ${GREEN}$WT_PATH/settings.json${NC}"
+    echo -e "  Size:        ${GREEN}${FILE_SIZE} bytes${NC}"
+    echo ""
+    echo -e "${YELLOW}⚠️  Note: Symlinks don't work between WSL and Windows${NC}"
+    echo -e "${YELLOW}   File is copied, not symlinked. Run sync script after edits.${NC}"
+    echo ""
+    echo -e "${BLUE}To edit settings:${NC}"
+    echo -e "  ${YELLOW}chezmoi edit ~/.config/windows-terminal/settings.json${NC}"
+    echo ""
+    echo -e "${BLUE}To sync changes to Windows Terminal:${NC}"
+    echo -e "  ${YELLOW}chezmoi apply${NC}"
+    echo -e "  ${YELLOW}# OR run: sync-windows-terminal${NC}"
+    echo ""
+    echo -e "${BLUE}To restore backup:${NC}"
+    echo -e "  ${YELLOW}cp $BACKUP_FILE $WT_PATH/settings.json${NC}"
+    echo ""
+else
+    echo -e "${RED}✗${NC} Failed to copy settings!"
+    exit 1
+fi
+
+{{- else }}
+echo "⚠️  Not running in WSL2, skipping Windows Terminal setup"
+{{- end }}
+{{- else }}
+echo "⚠️  OS is not Linux, skipping Windows Terminal setup"
+{{- end }}

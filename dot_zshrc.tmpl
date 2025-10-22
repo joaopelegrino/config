@@ -255,6 +255,32 @@ pwdc() {
   echo "📋 Copiado: $full_path"
 }
 
+# Função para sincronizar Windows Terminal settings
+sync-windows-terminal() {
+  local wt_path="/mnt/c/Users/{{ .windows_username }}/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState"
+  local chezmoi_config="$HOME/.config/windows-terminal/settings.json"
+
+  if [ ! -f "$chezmoi_config" ]; then
+    echo "❌ Config not found: $chezmoi_config"
+    return 1
+  fi
+
+  if [ ! -d "$wt_path" ]; then
+    echo "❌ Windows Terminal not found"
+    return 1
+  fi
+
+  echo "🔄 Syncing Windows Terminal settings..."
+  cp "$chezmoi_config" "$wt_path/settings.json"
+
+  if [ $? -eq 0 ]; then
+    echo "✅ Settings synced! Restart Windows Terminal to see changes."
+  else
+    echo "❌ Failed to sync settings"
+    return 1
+  fi
+}
+
 # Função para mostrar caminho atual e tree da pasta
 pwdct() {
   local current_path
