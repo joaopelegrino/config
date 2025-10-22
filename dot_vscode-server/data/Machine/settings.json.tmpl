@@ -2,20 +2,20 @@
 {{- /* These settings are specific to the machine/environment */ -}}
 {{- /* Template variables from ~/.config/chezmoi/chezmoi.toml */ -}}
 {
-    {{- /* Vim Integration - Uses centralized vimrc */ }}
+    {{- /* Vim Integration - Uses centralized vimrc */ -}}
     "vim.leader": ",",
     "vim.vimrc.path": "/home/{{ .chezmoi.username }}/vimrc",
     "vim.statusBarColors.surroundinputmode": "",
     "vim.digraphs": {},
 
-    {{- /* Remote Development Settings */ }}
+    {{- /* Remote Development Settings */ -}}
     "remote.downloadExtensionsLocally": true,
     {{- if eq .chezmoi.os "linux" }}
     "remote.WSL.fileWatcher.polling": false,
     "remote.WSL.fileWatcher.pollingInterval": 5000,
     {{- end }}
 
-    {{- /* Terminal Integration - Respects system shell */ }}
+    {{- /* Terminal Integration - Respects system shell */ -}}
     {{- if eq .chezmoi.os "linux" }}
     "terminal.integrated.shell.linux": "/usr/bin/zsh",
     "terminal.integrated.defaultProfile.linux": "zsh",
@@ -23,7 +23,7 @@
     "terminal.integrated.fontFamily": "MesloLGS NF",
     "terminal.integrated.fontSize": 14,
 
-    {{- /* File Watcher Settings - Optimized for WSL2 */ }}
+    {{- /* File Watcher Settings - Optimized for WSL2 */ -}}
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
@@ -33,13 +33,13 @@
         "**/.vscode-server/**": true
     },
 
-    {{- /* Performance Settings for WSL2 */ }}
+    {{- /* Performance Settings for WSL2 */ -}}
     {{- if eq .chezmoi.os "linux" }}
     "files.watcherUsePolling": true,
     "search.followSymlinks": false,
     {{- end }}
 
-    {{- /* Editor Settings */ }}
+    {{- /* Editor Settings */ -}}
     "editor.formatOnSave": false,
     "editor.minimap.enabled": true,
     "editor.rulers": [80, 120],
@@ -47,7 +47,7 @@
     "editor.insertSpaces": true,
     "editor.detectIndentation": true,
 
-    {{- /* Language-Specific Settings */ }}
+    {{- /* Language-Specific Settings */ -}}
     "[rust]": {
         "editor.defaultFormatter": "rust-lang.rust-analyzer",
         "editor.formatOnSave": true,
@@ -70,18 +70,18 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
 
-    {{- /* Git Integration */ }}
+    {{- /* Git Integration */ -}}
     "git.enableSmartCommit": true,
     "git.confirmSync": false,
     "git.autofetch": true,
 
-    {{- /* Extension-Specific Settings */ }}
+    {{- /* Extension-Specific Settings */ -}}
 
-    {{- /* Claude Code Settings */ }}
+    {{- /* Claude Code Settings */ -}}
     "claude-code.experimental.treeView": true,
     "claude-code.experimental.notifications": true,
 
-    {{- /* GitHub Copilot Settings */ }}
+    {{- /* GitHub Copilot Settings */ -}}
     "github.copilot.enable": {
         "*": true,
         "yaml": true,
@@ -89,37 +89,40 @@
         "markdown": true
     },
 
-    {{- /* Rust Analyzer Settings */ }}
+    {{- /* Rust Analyzer Settings */ -}}
+    "rust-analyzer.server.extraEnv": {
+        "PATH": "/home/{{ .chezmoi.username }}/.cargo/bin:$PATH"
+    },
     "rust-analyzer.checkOnSave.command": "clippy",
     "rust-analyzer.cargo.allFeatures": true,
     "rust-analyzer.completion.autoimport.enable": true,
 
-    {{- /* Docker Settings */ }}
+    {{- /* Docker Settings */ -}}
     "docker.containers.label": "ContainerName",
     "docker.containers.sortBy": "Status",
 
-    {{- /* Kubernetes Settings */ }}
+    {{- /* Kubernetes Settings */ -}}
     "vs-kubernetes": {
         "vs-kubernetes.crd-code-completion": "enabled",
         "vs-kubernetes.disable-linters": []
     },
 
-    {{- /* Files Association - Chezmoi Templates */ }}
+    {{- /* Files Association - Chezmoi Templates */ -}}
     "files.associations": {
         ".chezmoi*.yaml": "helm",
         ".chezmoi*.toml": "toml",
         "*.tmpl": "gotmpl"
     },
 
-    {{- /* Workbench Settings */ }}
+    {{- /* Workbench Settings */ -}}
     "workbench.colorTheme": "Default Dark Modern",
     "workbench.iconTheme": "vs-minimal",
     "workbench.startupEditor": "welcomePage",
 
-    {{- /* Security Settings */ }}
+    {{- /* Security Settings */ -}}
     "security.workspace.trust.untrustedFiles": "prompt",
     "security.workspace.trust.enabled": true,
 
-    {{- /* Telemetry */ }}
+    {{- /* Telemetry */ -}}
     "telemetry.telemetryLevel": "error"
 }
