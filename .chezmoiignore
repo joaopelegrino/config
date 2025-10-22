@@ -21,7 +21,12 @@ vim-diagnostic.sh
 
 # Arquivos de teste
 teste*
+teste*.c
+teste*.md
 fix_warp_wsl.sh
+
+# Arquivos de análise e relatórios temporários
+archive/
 
 # Configurações do VS Code (gerenciar separadamente)
 vscode-*.json
