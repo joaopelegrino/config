@@ -52,6 +52,22 @@ glog                      # git log --oneline --graph --decorate
 docker-compose -f docker-compose.dev.yml up  # If present in project
 ```
 
+### Claude Code Integration
+```bash
+# Custom slash commands available in VS Code
+/vscode-context    # Comprehensive VS Code setup context (extensions, paths, integrations)
+                   # Use when requesting VS Code improvements or troubleshooting
+
+# Claude Code configuration
+~/.claude/commands/              # Custom slash commands
+~/.claude/settings.local.json    # Permissions and preferences
+
+# VS Code Extensions (22 total)
+# - VSCodeVim v1.31.0 (full Vim emulation with centralized vimrc)
+# - Claude Code, Copilot, Rust Analyzer, Remote Development, etc.
+# - Managed via chezmoi: ~/.vscode-server/extensions.txt
+```
+
 ## Architecture and Structure
 
 ### Configuration Architecture

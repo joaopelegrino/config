@@ -1,0 +1,94 @@
+{
+    "Main Function": {
+        "prefix": "main",
+        "body": [
+            "fn main() {",
+            "    $0",
+            "}"
+        ],
+        "description": "Create main function"
+    },
+    "Test Module": {
+        "prefix": "testmod",
+        "body": [
+            "#[cfg(test)]",
+            "mod tests {",
+            "    use super::*;",
+            "",
+            "    #[test]",
+            "    fn ${1:test_name}() {",
+            "        $0",
+            "    }",
+            "}"
+        ],
+        "description": "Create test module"
+    },
+    "Derive Debug": {
+        "prefix": "derive",
+        "body": [
+            "#[derive(Debug${1:, Clone})]"
+        ],
+        "description": "Add derive macro"
+    },
+    "Result Type": {
+        "prefix": "result",
+        "body": [
+            "Result<${1:T}, ${2:E}>"
+        ],
+        "description": "Result type"
+    },
+    "Option Type": {
+        "prefix": "option",
+        "body": [
+            "Option<${1:T}>"
+        ],
+        "description": "Option type"
+    },
+    "Error Propagation": {
+        "prefix": "try",
+        "body": [
+            "let ${1:result} = ${2:expression}?;"
+        ],
+        "description": "Error propagation with ?"
+    },
+    "Async Function": {
+        "prefix": "asyncfn",
+        "body": [
+            "async fn ${1:function_name}(${2:params}) -> ${3:ReturnType} {",
+            "    $0",
+            "}"
+        ],
+        "description": "Async function"
+    },
+    "Tokio Test": {
+        "prefix": "tokiotest",
+        "body": [
+            "#[tokio::test]",
+            "async fn ${1:test_name}() {",
+            "    $0",
+            "}"
+        ],
+        "description": "Tokio async test"
+    },
+    "Struct with Debug": {
+        "prefix": "struct",
+        "body": [
+            "#[derive(Debug)]",
+            "struct ${1:Name} {",
+            "    ${2:field}: ${3:Type},",
+            "}"
+        ],
+        "description": "Struct with Debug derive"
+    },
+    "Impl Block": {
+        "prefix": "impl",
+        "body": [
+            "impl ${1:Type} {",
+            "    ${2:pub }fn ${3:method_name}(&${4:mut }self${5:, param: Type}) -> ${6:ReturnType} {",
+            "        $0",
+            "    }",
+            "}"
+        ],
+        "description": "Implementation block"
+    }
+}

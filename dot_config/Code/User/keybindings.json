@@ -1,0 +1,124 @@
+// VS Code Custom Keybindings
+// Integrated with Vim mode and optimized for development workflow
+[
+    // === File Navigation ===
+    {
+        "key": "ctrl+p",
+        "command": "workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "workbench.action.showCommands"
+    },
+    {
+        "key": "ctrl+b",
+        "command": "workbench.action.toggleSidebarVisibility"
+    },
+
+    // === Terminal ===
+    {
+        "key": "ctrl+`",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+        "key": "ctrl+shift+`",
+        "command": "workbench.action.terminal.new"
+    },
+
+    // === Claude Code ===
+    {
+        "key": "ctrl+shift+c",
+        "command": "claude-code.chat.open",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+a",
+        "command": "claude-code.addToContext",
+        "when": "editorTextFocus"
+    },
+
+    // === GitHub Copilot ===
+    {
+        "key": "alt+\\",
+        "command": "github.copilot.generate",
+        "when": "editorTextFocus && !editorHasSelection && !inlineSuggestionVisible"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "editor.action.inlineSuggest.trigger",
+        "when": "editorTextFocus && !editorHasSelection"
+    },
+
+    // === Code Actions ===
+    {
+        "key": "ctrl+.",
+        "command": "editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "f2",
+        "command": "editor.action.rename",
+        "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+
+    // === Git ===
+    {
+        "key": "ctrl+shift+g",
+        "command": "workbench.view.scm"
+    },
+
+    // === Search ===
+    {
+        "key": "ctrl+shift+f",
+        "command": "workbench.action.findInFiles"
+    },
+    {
+        "key": "ctrl+h",
+        "command": "editor.action.startFindReplaceAction",
+        "when": "editorFocus"
+    },
+
+    // === Multi-Cursor ===
+    {
+        "key": "ctrl+alt+down",
+        "command": "editor.action.insertCursorBelow",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+up",
+        "command": "editor.action.insertCursorAbove",
+        "when": "editorTextFocus"
+    },
+
+    // === Debugging ===
+    {
+        "key": "f5",
+        "command": "workbench.action.debug.start",
+        "when": "debuggersAvailable && debugState == 'inactive'"
+    },
+    {
+        "key": "f9",
+        "command": "editor.debug.action.toggleBreakpoint",
+        "when": "debuggersAvailable && editorTextFocus"
+    },
+
+    // === Docker/Containers ===
+    {
+        "key": "ctrl+shift+d",
+        "command": "workbench.view.extension.dockerView"
+    },
+
+    // === Rust-Specific ===
+    {
+        "key": "ctrl+shift+b",
+        "command": "workbench.action.tasks.build",
+        "when": "resourceLangId == 'rust'"
+    },
+
+    // === Markdown Preview ===
+    {
+        "key": "ctrl+shift+v",
+        "command": "markdown.showPreview",
+        "when": "editorLangId == 'markdown'"
+    }
+]

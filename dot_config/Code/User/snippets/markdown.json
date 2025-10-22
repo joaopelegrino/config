@@ -1,0 +1,95 @@
+{
+    "Code Block": {
+        "prefix": "code",
+        "body": [
+            "```${1:language}",
+            "$0",
+            "```"
+        ],
+        "description": "Code block"
+    },
+    "Task List": {
+        "prefix": "task",
+        "body": [
+            "- [ ] ${1:Task description}"
+        ],
+        "description": "Task list item"
+    },
+    "Table": {
+        "prefix": "table",
+        "body": [
+            "| ${1:Header 1} | ${2:Header 2} |",
+            "| ------------ | ------------ |",
+            "| ${3:Cell 1}   | ${4:Cell 2}   |",
+            "$0"
+        ],
+        "description": "Markdown table"
+    },
+    "Collapsible Section": {
+        "prefix": "details",
+        "body": [
+            "<details>",
+            "<summary>${1:Title}</summary>",
+            "",
+            "$0",
+            "",
+            "</details>"
+        ],
+        "description": "Collapsible section"
+    },
+    "Note Alert": {
+        "prefix": "note",
+        "body": [
+            "> [!NOTE]",
+            "> ${1:Note content}"
+        ],
+        "description": "GitHub-style note alert"
+    },
+    "Warning Alert": {
+        "prefix": "warning",
+        "body": [
+            "> [!WARNING]",
+            "> ${1:Warning content}"
+        ],
+        "description": "GitHub-style warning alert"
+    },
+    "Important Alert": {
+        "prefix": "important",
+        "body": [
+            "> [!IMPORTANT]",
+            "> ${1:Important content}"
+        ],
+        "description": "GitHub-style important alert"
+    },
+    "Tip Alert": {
+        "prefix": "tip",
+        "body": [
+            "> [!TIP]",
+            "> ${1:Tip content}"
+        ],
+        "description": "GitHub-style tip alert"
+    },
+    "Mermaid Diagram": {
+        "prefix": "mermaid",
+        "body": [
+            "```mermaid",
+            "${1:graph TD}",
+            "    ${2:A[Start] --> B[End]}",
+            "```"
+        ],
+        "description": "Mermaid diagram"
+    },
+    "Front Matter": {
+        "prefix": "frontmatter",
+        "body": [
+            "---",
+            "title: ${1:Title}",
+            "date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+            "tags: [${2:tag1, tag2}]",
+            "---",
+            "",
+            "$0"
+        ],
+        "description": "YAML front matter"
+    }
+}

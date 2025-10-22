@@ -1,0 +1,109 @@
+{
+    "Main Guard": {
+        "prefix": "ifmain",
+        "body": [
+            "if __name__ == \"__main__\":",
+            "    $0"
+        ],
+        "description": "if __name__ == '__main__' guard"
+    },
+    "Dataclass": {
+        "prefix": "dataclass",
+        "body": [
+            "from dataclasses import dataclass",
+            "",
+            "@dataclass",
+            "class ${1:ClassName}:",
+            "    ${2:field}: ${3:type}",
+            "    $0"
+        ],
+        "description": "Dataclass definition"
+    },
+    "Async Function": {
+        "prefix": "asyncdef",
+        "body": [
+            "async def ${1:function_name}(${2:params}) -> ${3:ReturnType}:",
+            "    \"\"\"${4:Docstring}\"\"\"",
+            "    $0"
+        ],
+        "description": "Async function with type hints"
+    },
+    "Type Hints": {
+        "prefix": "typing",
+        "body": [
+            "from typing import ${1|List,Dict,Optional,Union,Tuple,Set,Any|}"
+        ],
+        "description": "Import typing hints"
+    },
+    "Try Except": {
+        "prefix": "try",
+        "body": [
+            "try:",
+            "    $1",
+            "except ${2:Exception} as ${3:e}:",
+            "    ${4:pass}",
+            "$0"
+        ],
+        "description": "Try except block"
+    },
+    "Context Manager": {
+        "prefix": "with",
+        "body": [
+            "with ${1:expression} as ${2:variable}:",
+            "    $0"
+        ],
+        "description": "Context manager"
+    },
+    "Property": {
+        "prefix": "property",
+        "body": [
+            "@property",
+            "def ${1:property_name}(self) -> ${2:type}:",
+            "    \"\"\"${3:Docstring}\"\"\"",
+            "    return self._${1:property_name}",
+            "",
+            "@${1:property_name}.setter",
+            "def ${1:property_name}(self, value: ${2:type}) -> None:",
+            "    self._${1:property_name} = value",
+            "$0"
+        ],
+        "description": "Property with setter"
+    },
+    "Pytest Test": {
+        "prefix": "pytest",
+        "body": [
+            "def test_${1:test_name}():",
+            "    # Arrange",
+            "    ${2:setup}",
+            "    ",
+            "    # Act",
+            "    ${3:action}",
+            "    ",
+            "    # Assert",
+            "    assert ${4:condition}",
+            "    $0"
+        ],
+        "description": "Pytest test function"
+    },
+    "Pydantic Model": {
+        "prefix": "pydantic",
+        "body": [
+            "from pydantic import BaseModel, Field",
+            "",
+            "class ${1:ModelName}(BaseModel):",
+            "    ${2:field}: ${3:type} = Field(${4:...}, description=\"${5:description}\")",
+            "    $0"
+        ],
+        "description": "Pydantic model"
+    },
+    "Logger": {
+        "prefix": "logger",
+        "body": [
+            "import logging",
+            "",
+            "logger = logging.getLogger(__name__)",
+            "$0"
+        ],
+        "description": "Create logger"
+    }
+}
