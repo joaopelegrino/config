@@ -406,32 +406,30 @@ alias gd="git diff"
 
 # Função para estado geral do repositório git (não-interativo)
 gitoverview() {
-  echo '📊 Estado Geral do Repositório Git'
-  echo '════════════════════════════════════'
-  echo
-  
-  echo '📁 Branch atual:'
-  git branch --show-current 2>/dev/null
-  echo
-  
-  echo '🌐 Remotes configurados:'
-  git remote -v 2>/dev/null
-  echo
-  
-  echo '🌿 Todas as branches (locais e remotas):'
-  git --no-pager branch -a --sort=-committerdate 2>/dev/null
-  echo
-  
-  echo '📋 Status do repositório:'
-  git status -sb 2>/dev/null
-  echo
-  
-  echo '📈 Últimos 5 commits:'
-  git --no-pager log --oneline -5 2>/dev/null
-  echo
-  
-  echo '🔄 Comparação com remote (se disponível):'
-  local comparison
+  local output
+
+  # Captura toda a saída em uma variável
+  output=$(cat <<EOF
+📊 Estado Geral do Repositório Git
+════════════════════════════════════
+
+📁 Branch atual:
+$(git branch --show-current 2>/dev/null)
+
+🌐 Remotes configurados:
+$(git remote -v 2>/dev/null)
+
+🌿 Todas as branches (locais e remotas):
+$(git --no-pager branch -a --sort=-committerdate 2>/dev/null)
+
+📋 Status do repositório:
+$(git status -sb 2>/dev/null)
+
+📈 Últimos 5 commits:
+$(git --no-pager log --oneline -5 2>/dev/null)
+
+🔄 Comparação com remote (se disponível):
+$(
   comparison=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
   if [ $? -eq 0 ] && [ -n "$comparison" ]; then
     echo "$comparison" | awk '{
@@ -442,6 +440,19 @@ gitoverview() {
   else
     echo 'Branch não está tracking um remote'
   fi
+)
+EOF
+)
+
+  # Exibe a saída no terminal
+  echo "$output"
+  echo
+
+  # Copia para clipboard (funciona no WSL)
+  echo -n "$output" | clip.exe 2>/dev/null || echo -n "$output" | xclip -selection clipboard 2>/dev/null
+
+  # Confirma que foi copiado
+  echo '📋 Resultado copiado para clipboard!'
 }
 
 # Navegação rápida
