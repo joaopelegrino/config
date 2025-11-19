@@ -1126,6 +1126,27 @@ docker-compose ps  # Status do compose
 3. Ativar para sua distro Ubuntu
 4. Reiniciar terminal
 
+#### Erros do Zsh compinit (Corrigido 2025-11-19)
+
+**Sintomas:**
+- `compinit:489: bad math expression: operand expected at end of string`
+- `/home/notebook/.asdf/completions/asdf.bash:98: command not found: complete`
+- Avisos sobre arquivos inseguros
+
+**Solução aplicada:**
+```bash
+# 1. Corrigir ownership de arquivo inseguro
+sudo chown root:root /usr/share/zsh/vendor-completions/_antigravity
+
+# 2. Limpar cache de completions
+rm -f ~/.zcompdump*
+
+# 3. Usar completions nativos do Zsh para asdf (já configurado em ~/.zshrc:578-583)
+# Substituído asdf.bash por fpath nativo do Zsh
+```
+
+**Referência:** Ver seção "ASDF Completions Configuration" em `/home/notebook/.local/share/chezmoi/CLAUDE.md` para detalhes completos.
+
 ---
 
 ## 📚 Documentação Adicional

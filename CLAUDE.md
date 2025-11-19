@@ -421,6 +421,45 @@ ZSH_DISABLE_COMPFIX=true  # Suppress completion warnings
 
 **Impact:** No functionality loss, just suppresses harmless warnings
 
+### ASDF Completions Configuration (Fixed 2025-11-19)
+
+**Issue:** Multiple errors on Zsh startup:
+- `compinit:489: bad math expression: operand expected at end of string`
+- `/home/notebook/.asdf/completions/asdf.bash:98: command not found: complete`
+- Insecure file warnings from compaudit
+
+**Root Causes:**
+1. **Bash completions in Zsh**: Using `asdf.bash` (Bash syntax) instead of native Zsh completions
+2. **Insecure file ownership**: `/usr/share/zsh/vendor-completions/_antigravity` owned by `nobody`
+3. **Stale completion cache**: Old `.zcompdump` files with incorrect state
+
+**Solution Implemented in `~/.zshrc:578-583`:**
+```bash
+. "$HOME/.asdf/asdf.sh"
+# Append asdf completions to fpath (Zsh native)
+fpath=(${ASDF_DIR}/completions $fpath)
+# Initialize completions with autocomplete
+autoload -Uz compinit
+compinit
+```
+
+**Additional Fixes:**
+```bash
+# Fix insecure file ownership
+sudo chown root:root /usr/share/zsh/vendor-completions/_antigravity
+
+# Clear stale completion cache
+rm -f ~/.zcompdump*
+```
+
+**Impact:**
+- Eliminates all `bad math expression` errors
+- Uses native Zsh completion system (`_asdf` instead of `asdf.bash`)
+- Maintains full asdf functionality with proper autocomplete
+- Clean shell startup without warnings
+
+**Reference:** ASDF provides native Zsh completions in `~/.asdf/completions/_asdf` which should be added to `fpath` rather than sourcing the Bash completion file.
+
 ---
 
 This configuration represents a mature, production-ready development environment optimized for productivity and maintainability, with documented workarounds for WSL2 edge cases.

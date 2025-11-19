@@ -99,6 +99,11 @@ else
 fi
 # --- Fim Carregar Segredos ---
 
+# Google ADK - Alias para ativar ambiente virtual
+if [[ -n "$ADK_VENV_PATH" ]] && [[ -d "$ADK_VENV_PATH" ]]; then
+  alias activate-adk="source $ADK_VENV_PATH/bin/activate"
+fi
+
 # --- Configuração FZF ---
 # Carrega configurações, key bindings e completion do FZF.
 # As variáveis FZF_* (comandos, opções) devem estar DENTRO de ~/.fzf.zsh
@@ -571,7 +576,11 @@ export WASMTIME_HOME="$HOME/.wasmtime"
 
 export PATH="$WASMTIME_HOME/bin:$PATH"
 . "$HOME/.asdf/asdf.sh"
-. "$HOME/.asdf/completions/asdf.bash"
+# Append asdf completions to fpath (Zsh native)
+fpath=(${ASDF_DIR}/completions $fpath)
+# Initialize completions with autocomplete
+autoload -Uz compinit
+compinit
 
 # ========================================
 # ERLANG/OTP COMPILATION OPTIONS
