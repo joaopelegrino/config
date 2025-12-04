@@ -1,8 +1,9 @@
 # ~/.zshenv: carregado para TODOS os tipos de shell zsh
 # Definir apenas variáveis de ambiente essenciais aqui
 
-# NVM Directory - definir antes de outros scripts
-export NVM_DIR="$HOME/.nvm"
+# NVM Directory - DESATIVADO em favor do mise
+# Node.js gerenciado por mise (por projeto via .mise.toml)
+# export NVM_DIR="$HOME/.nvm"
 
 # Configurações de linguagem
 export LANG=pt_BR.UTF-8

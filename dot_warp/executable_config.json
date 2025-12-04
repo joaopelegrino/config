@@ -1,0 +1,9 @@
+{
+  "notebook_creation_enabled": true,
+  "workspace_path": "~/.warp/notebooks",
+  "settings": {
+    "shell_integration": true,
+    "wsl_compatibility": true,
+    "zsh_support": true
+  }
+}

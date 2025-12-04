@@ -24,16 +24,35 @@ starship = "latest"
 "cargo:cargo-watch" = "latest"    # auto-rebuild on file changes
 {{- end }}
 
-# Optional: Node.js (if needed)
-# node = "lts"
+# Clojure Ecosystem
+java = "21"
+clojure = "1.12.3.1577"
+leiningen = "latest"
+babashka = "latest"
+clj-kondo = "latest"
 
-# Optional: Python (if needed)
-# python = "3.12"
+# Google ADK Stack
+python = "3.12"              # ADK Python 1.19.0
+gcloud = "548.0.0"           # Google Cloud SDK (substitui apt)
+terraform = "1.14.0"         # IaC para Vertex AI deploy
+
+# Node.js (centralizado no mise)
+# Nota: emsdk também instala Node.js, mas mise tem prioridade no PATH
+# Para projetos específicos, use .mise.toml local com versão desejada
+node = "lts"
+bun = "latest"  # Fast JavaScript runtime & package manager
 
 [env]
 EDITOR = "{{ .editor | default "vim" }}"
 BAT_THEME = "Catppuccin Mocha"
 MISE_YES = "true"  # Auto-confirm installs
+JAVA_HOME = "{{ .chezmoi.homeDir }}/.local/share/mise/installs/java/21.0.2"
+
+# Google Cloud / Vertex AI (ADK)
+GOOGLE_GENAI_USE_VERTEXAI = "TRUE"
+GOOGLE_CLOUD_PROJECT = "claudecode-e-vertex-com-skd"
+GOOGLE_CLOUD_LOCATION = "us-central1"
+# CLAUDE_CODE_USE_VERTEX = "1"  # DESABILITADO: usar plano Max direto na API Anthropic
 
 [settings]
 yes = true  # Don't prompt for confirmations
