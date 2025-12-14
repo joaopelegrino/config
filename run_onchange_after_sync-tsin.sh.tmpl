@@ -1,0 +1,55 @@
+#!/bin/bash
+# run_onchange_after_sync-tsin.sh.tmpl
+#
+# Script reativo para sincronizar tsin.nvim
+# Segue o padrao Hash Trick do ambiente-centralizado_v1.md
+#
+# HASHING TRICK:
+# - Quando ~/tsin.nvim muda (git pull), este script re-executa
+# - Garante que lazy.nvim reconheca as mudancas
+#
+# Hash: {{ output "git" "-C" (joinPath .chezmoi.homeDir "tsin.nvim") "rev-parse" "HEAD" | trim | default "no-repo" }}
+
+echo "🔄 Verificando tsin.nvim..."
+
+TSIN_DIR="${HOME}/tsin.nvim"
+
+if [ -d "$TSIN_DIR" ]; then
+    # Verificar se e um repo git valido
+    if [ -d "$TSIN_DIR/.git" ]; then
+        COMMIT=$(git -C "$TSIN_DIR" rev-parse --short HEAD 2>/dev/null)
+        BRANCH=$(git -C "$TSIN_DIR" branch --show-current 2>/dev/null)
+
+        echo "✅ tsin.nvim encontrado"
+        echo "   Branch: $BRANCH"
+        echo "   Commit: $COMMIT"
+
+        # Verificar se tem remote configurado
+        REMOTE=$(git -C "$TSIN_DIR" remote get-url personal 2>/dev/null)
+        if [ -n "$REMOTE" ]; then
+            echo "   Remote: personal -> ${REMOTE%%@*}@..."
+        else
+            echo "   ⚠️  Sem remote 'personal' configurado"
+        fi
+
+        # Limpar cache do lazy.nvim para forcar reload
+        LAZY_CACHE="${HOME}/.local/state/nvim/lazy/cache"
+        if [ -d "$LAZY_CACHE" ]; then
+            rm -rf "$LAZY_CACHE" 2>/dev/null
+            echo "   Cache lazy.nvim limpo"
+        fi
+    else
+        echo "⚠️  $TSIN_DIR existe mas nao e um repo git"
+    fi
+else
+    echo "❌ tsin.nvim nao encontrado em $TSIN_DIR"
+    echo ""
+    echo "Para instalar:"
+    echo "  git clone <url> ~/tsin.nvim"
+    echo ""
+    echo "Ou criar novo repositorio:"
+    echo "  mkdir -p ~/tsin.nvim && cd ~/tsin.nvim && git init"
+fi
+
+echo ""
+echo "📍 Configuracao nvim aponta para: ~/tsin.nvim"
