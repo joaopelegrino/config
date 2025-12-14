@@ -68,12 +68,16 @@ source $ZSH/oh-my-zsh.sh
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # Carrega nvm bash_completion para Zsh também
 
 
-# alias cnvim='p ~/.config/nvim/' # REMOVIDO
+# === Editor Aliases (Neovim - SSOT v3.2) ===
+alias i='nvim'                                    # Neovim (padrao)
+alias it='nvim -c "terminal"'                     # Neovim com terminal
+alias iv='nvim -u NONE'                           # Neovim vanilla (sem config)
+alias nved='nvim ~/.config/nvim/init.lua'         # Editar config nvim
+alias tsined='cd ~/tsin.nvim && nvim .'           # Editar tsin.nvim
 
-# === Vim Initialization Modes ===
-alias i='vim -c "source ~/.vimrc"'                                           # Vim normal (padrão completo)
-alias it='vim -c "source ~/.vimrc" -c "only" -c "terminal ++curwin"'         # Vim direto no terminal mode
-alias iv='vim -u NONE -U NONE --noplugin'                                    # Vim vanilla (sem config/plugins)
+# === Vim Legacy (disponivel se necessario) ===
+alias v='vim'                                     # Vim classico
+alias vt='vim -c "terminal ++curwin"'             # Vim com terminal
 
 alias c='clear'
 alias la='ls -A' # Mostra ocultos exceto . e ..
@@ -348,10 +352,11 @@ SCRIPT_NAME="estruturaissue.sh" # Nome do script que você forneceu
 # Shell reload - Recarregar todas as configurações
 alias reload="source ~/.zshenv && source ~/.zshrc && source ~/.p10k.zsh && source ~/.fzf.zsh"
 
-# Atalhos para projetos e configurações
-alias zed="vim /home/notebook/config/zshrc"
-alias ved="vim /home/notebook/config/vimrc"
-alias wted="vim '/mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'"
+# Atalhos para projetos e configurações (SSOT via chezmoi)
+alias zed="nvim ~/.local/share/chezmoi/dot_zshrc.tmpl"         # Editar zshrc (chezmoi source)
+alias ved="nvim ~/.local/share/chezmoi/dot_vimrc"              # Editar vimrc (chezmoi source)
+alias ched="cd ~/.local/share/chezmoi && nvim ."               # Editar chezmoi dotfiles
+alias wted="nvim '/mnt/c/Users/valor/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'"
 
 # LLM template aliases
 alias llm-new='~/config/create-llm-template.sh'
