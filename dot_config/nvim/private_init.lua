@@ -1,13 +1,14 @@
 -- ~/.config/nvim/init.lua
 -- Configuracao Neovim para Ubuntu 24.04 - Sistema AGENT
--- Versao: 1.0.0 | Data: 2025-12-13
+-- Versao: 2.0.0 | Data: 2025-12-15
+-- Melhorias: Clojure/Lisp otimizado
 
 -- ============================================================================
 -- OPCOES BASICAS
 -- ============================================================================
 
 vim.g.mapleader = ","
-vim.g.maplocalleader = ","
+vim.g.maplocalleader = "\\"  -- Separado para Conjure (Clojure REPL)
 
 -- Interface
 vim.opt.number = true
@@ -163,6 +164,7 @@ require("lazy").setup({
       telescope.setup({
         defaults = {
           file_ignore_patterns = { "node_modules", ".git/", "target/" },
+          hidden = true,  -- Mostrar arquivos/pastas ocultos (.claude/, etc)
         },
       })
     end,
@@ -315,6 +317,7 @@ require("lazy").setup({
           end, { "i", "s" }),
         }),
         sources = cmp.config.sources({
+          { name = "conjure" },   -- Completions do REPL (prioridade)
           { name = "nvim_lsp" },
           { name = "luasnip" },
           { name = "buffer" },
@@ -379,14 +382,54 @@ require("lazy").setup({
     "folke/which-key.nvim",
     event = "VeryLazy",
     config = function()
-      require("which-key").setup()
+      local wk = require("which-key")
+      wk.setup()
+
+      -- Grupos para Clojure (apenas em buffers Lisp)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "clojure", "fennel", "lisp", "scheme" },
+        callback = function()
+          wk.add({
+            { "<localleader>", group = "Conjure" },
+            { "<localleader>e", group = "eval" },
+            { "<localleader>l", group = "log" },
+            { "<localleader>t", group = "test" },
+            { "<localleader>r", group = "repl" },
+            { "<localleader>c", group = "connect" },
+            { "<localleader>g", group = "go-to" },
+          })
+        end,
+      })
     end,
   },
 
-  -- Conjure (Clojure REPL)
+  -- ============================================================================
+  -- CLOJURE/LISP
+  -- ============================================================================
+
+  -- Conjure (Clojure REPL) - Otimizado
   {
     "Olical/conjure",
-    ft = { "clojure", "fennel" },
+    ft = { "clojure", "fennel", "racket", "scheme", "lisp" },
+    init = function()
+      -- HUD (janela flutuante com resultados)
+      vim.g["conjure#log#hud#enabled"] = true
+      vim.g["conjure#log#hud#width"] = 0.42
+      vim.g["conjure#log#hud#height"] = 0.38
+      vim.g["conjure#log#hud#anchor"] = "SE"
+
+      -- Highlight de expressao avaliada
+      vim.g["conjure#highlight#enabled"] = true
+      vim.g["conjure#highlight#timeout"] = 500
+
+      -- Prefixo de keymaps
+      vim.g["conjure#mapping#prefix"] = "<localleader>"
+
+      -- Log buffer
+      vim.g["conjure#log#wrap"] = true
+      vim.g["conjure#log#trim#at"] = 10000
+      vim.g["conjure#log#trim#to"] = 5000
+    end,
     dependencies = { "PaterJason/cmp-conjure" },
   },
 
@@ -399,13 +442,48 @@ require("lazy").setup({
     end,
   },
 
-  -- tsin.nvim (SSOT v3.1 - Repositorio independente ~/tsin.nvim)
-  -- Remote: github.com/joaopelegrino/tsin-24-04
+  -- Rainbow Delimiters (parenteses coloridos)
   {
-    dir = "~/tsin.nvim",
-    name = "tsin.nvim",
+    "HiPhish/rainbow-delimiters.nvim",
+    event = "BufRead",
+    config = function()
+      local rainbow = require("rainbow-delimiters")
+      vim.g.rainbow_delimiters = {
+        strategy = {
+          [""] = rainbow.strategy["global"],
+          clojure = rainbow.strategy["local"],
+          fennel = rainbow.strategy["local"],
+          lisp = rainbow.strategy["local"],
+          scheme = rainbow.strategy["local"],
+        },
+        highlight = {
+          "RainbowDelimiterRed",
+          "RainbowDelimiterYellow",
+          "RainbowDelimiterBlue",
+          "RainbowDelimiterOrange",
+          "RainbowDelimiterGreen",
+          "RainbowDelimiterViolet",
+          "RainbowDelimiterCyan",
+        },
+      }
+    end,
+  },
+
+  -- Parinfer (indentacao inteligente) - DESABILITADO: conflita com paredit
+  -- FIX: Mantido apenas Paredit para evitar comportamento imprevisivel
+  -- {
+  --   "gpanders/nvim-parinfer",
+  --   ft = { "clojure", "fennel", "lisp", "scheme", "racket" },
+  --   init = function()
+  --     vim.g.parinfer_mode = "smart"
+  --   end,
+  -- },
+
+  -- tsin.nvim (Plugin local - Sistema AGENT SSOT v3.1)
+  {
+    dir = "~/tsin.nvim",  -- FIX: path correto do repositorio
+    name = "tsin",
     ft = { "markdown", "text" },
-    dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local ok, tsin = pcall(require, "tsin")
       if ok and tsin.setup then
@@ -419,14 +497,9 @@ require("lazy").setup({
               variaveis = "variaveis",
               globais = "globais",
               projetos = "projetos",
-              conceituais = "conceituais",  -- legado (fallback)
+              conceituais = "conceituais",  -- legado
             },
             relatorios = "historico/relatorios",
-          },
-          -- UI
-          ui = {
-            virtual_text = { enabled = true },
-            hover = { enabled = true, border = "rounded" },
           },
           -- Keymaps com prefixo ,t
           keymaps = {
@@ -491,11 +564,11 @@ keymap("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
 keymap("n", "n", "nzzzv", { desc = "Next search result" })
 keymap("n", "N", "Nzzzv", { desc = "Previous search result" })
 
--- Terminal
-keymap("n", "<leader>tt", "<cmd>terminal<cr>", { desc = "Open terminal" })
-keymap("n", "<leader>tv", "<cmd>vsplit | terminal<cr>", { desc = "Terminal vertical split" })
-keymap("n", "<leader>th", "<cmd>split | terminal<cr>", { desc = "Terminal horizontal split" })
-keymap("n", "<leader>tf", "<cmd>tabnew | terminal<cr>", { desc = "Terminal in new tab" })
+-- Terminal (FIX: <leader>T para evitar conflito com tsin <leader>t)
+keymap("n", "<leader>Tt", "<cmd>terminal<cr>", { desc = "Open terminal" })
+keymap("n", "<leader>Tv", "<cmd>vsplit | terminal<cr>", { desc = "Terminal vsplit" })
+keymap("n", "<leader>Th", "<cmd>split | terminal<cr>", { desc = "Terminal hsplit" })
+keymap("n", "<leader>Tf", "<cmd>tabnew | terminal<cr>", { desc = "Terminal new tab" })
 
 -- Terminal mode keymaps
 keymap("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -541,6 +614,30 @@ autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount then
       pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
+  end,
+})
+
+-- ============================================================================
+-- FIX: CONFLITOS CLOJURE/LISP (v2)
+-- ============================================================================
+
+-- Fix 1: Tab/S-Tab em arquivos Lisp (liberar para paredit)
+autocmd("FileType", {
+  pattern = { "clojure", "fennel", "lisp", "scheme", "racket" },
+  callback = function()
+    -- Remover keymaps do bufferline para Lisps
+    pcall(vim.keymap.del, "n", "<Tab>", { buffer = true })
+    pcall(vim.keymap.del, "n", "<S-Tab>", { buffer = true })
+
+    -- Navegacao de buffers com Alt em Lisps
+    vim.keymap.set("n", "<M-l>", "<cmd>BufferLineCycleNext<cr>", {
+      buffer = true,
+      desc = "Next buffer (Alt)",
+    })
+    vim.keymap.set("n", "<M-h>", "<cmd>BufferLineCyclePrev<cr>", {
+      buffer = true,
+      desc = "Prev buffer (Alt)",
+    })
   end,
 })
 
