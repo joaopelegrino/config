@@ -19,6 +19,9 @@ rust = "stable"
 # Prompt
 starship = "latest"
 
+# Editor
+neovim = "0.11.5"  # Neovim - requerido para tsin.nvim e lazy.nvim
+
 {{- if eq .company "Individual Developer" }}
 # Development tools
 "cargo:cargo-watch" = "latest"    # auto-rebuild on file changes
@@ -42,6 +45,9 @@ terraform = "1.14.0"         # IaC para Vertex AI deploy
 node = "lts"
 bun = "latest"  # Fast JavaScript runtime & package manager
 sqlite = "latest"  # SQLite CLI para operações de banco de dados
+
+# AI Coding Assistants
+"aqua:sst/opencode" = "latest"  # OpenCode CLI (alternativa open-source)
 
 [env]
 EDITOR = "{{ .editor | default "vim" }}"
