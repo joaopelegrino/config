@@ -48,3 +48,9 @@ terminal
 # Vim - Diretórios gerados automaticamente
 dot_vim/plugged
 dot_vim/undodir
+
+# Neovim - Prevenir duplicacao de plugins locais
+# IMPORTANTE: tsin.nvim deve ser carregado de ~/tsin.nvim/ (via lazy dir=)
+# NAO copiar para .config/nvim/lua/ - causa conflitos de require()
+.config/nvim/lua/
+.config/nvim/plugin/
